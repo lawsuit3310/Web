@@ -2,8 +2,42 @@
 @using System
 @using HttpRequests.KInv
 
+@{var Data = await KInvManager.InquiryStockPrice(Model);}
+
 @{
     Layout = "_Layout";
 }
 
-@KInvManager.Inquiry(Model).Result.KR_Name
+<link rel = "stylesheet" href = "~/css/stock/info.css">
+
+<div class = "content_info">
+	<span class = "stock_name">삼성 전자</span><h1>@Data.Market</h1>
+	<div class = "clearfix"></div>
+    <table class = "stock_info"><tbody>
+		<tr>
+			<td><span>종목 코드</span></td><td><span>@Data.Ticker</span></td>
+		</tr>
+		<tr>
+			<td><span>종목명</span></td><td><span>@Data.Short_Name</span></td>
+		</tr>
+		<tr>
+			<td><span>시장 구분</span></td><td><span>@Data.Market</span></td>
+		</tr>
+		<tr>
+			<td><span>현재가</span></td><td><span>@Data.stck_prpr</span></td>
+		</tr>
+		<tr>
+			<td><span>전일 대비</span></td><td><span>@Data.prdy_vrss</span></td>
+		</tr>
+		<tr>
+			<td><span>1년 최고가</span></td><td><span>@Data.w52_hgpr</span></td>
+		</tr>
+		<tr>
+			<td><span>1년 최저가</span></td><td><span>@Data.w52_lwpr</span></td>
+		</tr>
+		<tr>
+			<td><span>업종</span></td><td><span>@Data.Industry</span></td>
+		</tr>
+	<tbody></table>
+</div>
+

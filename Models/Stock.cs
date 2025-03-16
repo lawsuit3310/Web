@@ -10,16 +10,28 @@ public class Stock
 	public string Privacy {get;}
 	public string Section {get;}
 	public string Kind {get;}
-	public int Price {get;}
 	public int Issued_Share {get;}
+	public string Industry {get;}
 	
-	public int Price_Now = 0;
-	public int Price_Highest_Y = 0;
-	public int Price_Lowest_Y = 0;
+	//현재가
+	public int stck_prpr = 0;
+	//전일 대비
+	public int prdy_vrss = 0;
+	//1년(52주 중) 최고가
+	public int w52_hgpr = 0;
+	//1년(52주 중) 최저가
+	public int w52_lwpr = 0;
 	
-	public Stock(string i, string t, string k, string s, string e, string l, string m, string p, string sec, string ki, int pr, int sh)
+	
+	public Stock(string i, string t, string k, string s, string e, string l, string m, string p, string sec, string ki, int sh, string ind)
 	{
 		ISIN = i;
+		int len = t.Length;
+		if (m == "KOSPI" || m == "KOSDAQ" || m == "KOSDAQ GLO")	
+		for (int f = 0; f <  6 - len; f++)
+		{
+            t = t.Insert(0, "0");
+		}
 		Ticker = t;
 		KR_Name = k;
 		Short_Name = s;
@@ -29,7 +41,7 @@ public class Stock
 		Privacy = p;
 		Section = sec;
 		Kind = ki;
-		Price = pr;
 		Issued_Share = sh;
+		Industry = ind;
 	}
 }

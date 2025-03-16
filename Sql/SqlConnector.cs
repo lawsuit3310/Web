@@ -27,8 +27,8 @@ namespace SqlTasks
 			List<Stock> result = new ();
 			
 			var con = GetConnection();
-			string queryStringKR = $"select * from krx where KR_Name {query} ";
-			string queryStringEN = $"select * from krx where EN_Name {query} ";
+			string queryStringKR = $"select * from krx_complete where KR_Name {query} ";
+			string queryStringEN = $"select * from krx_complete where EN_Name {query} ";
 			
 			con.Open();
 			
@@ -49,8 +49,8 @@ namespace SqlTasks
 						reader["Privacy"].ToString().Trim(),
 						reader["Section"].ToString().Trim(),
 						reader["kind"].ToString().Trim(),
-						Convert.ToInt32(reader["Price"].ToString()),
-						Convert.ToInt32(reader["Issued_Share"].ToString())
+						Convert.ToInt32(reader["Issued_Share"].ToString()),
+						reader["Industry"].ToString()
 					));
 				}
 			}
@@ -72,8 +72,8 @@ namespace SqlTasks
 						reader["Privacy"].ToString().Trim(),
 						reader["Section"].ToString().Trim(),
 						reader["kind"].ToString().Trim(),
-						Convert.ToInt32(reader["Price"].ToString()),
-						Convert.ToInt32(reader["Issued_Share"].ToString())
+						Convert.ToInt32(reader["Issued_Share"].ToString()),
+						reader["Industry"].ToString()
 					));
 				}
 			}
@@ -93,7 +93,7 @@ namespace SqlTasks
 			Stock result = null;
 			
 			var con = GetConnection();
-			string queryStringKR = $"select * from krx where ISIN = '{ISIN}' ";
+			string queryStringKR = $"select * from krx_complete where ISIN = '{ISIN}' ";
 			
 			con.Open();
 			
@@ -114,8 +114,8 @@ namespace SqlTasks
 						reader["Privacy"].ToString().Trim(),
 						reader["Section"].ToString().Trim(),
 						reader["kind"].ToString().Trim(),
-						Convert.ToInt32(reader["Price"].ToString()),
-						Convert.ToInt32(reader["Issued_Share"].ToString())
+						Convert.ToInt32(reader["Issued_Share"].ToString()),
+						reader["Industry"].ToString()
 					);
 				}
 			}

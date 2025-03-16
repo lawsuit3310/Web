@@ -1,0 +1,11 @@
+@using HttpRequests.KInv;
+<link rel = "stylesheet" href = "~/css/stock/index.css">
+
+@{
+    Layout = "_Layout";
+}
+
+<form asp-controller = "Stock" asp-action = "Search" method = "get" class = "search_box">
+	<input type = "text" class = "search_box"  name="query" placeholder="Search..."></input>
+	<input type = "submit" class = "submit" value = "조회" class = "btn"></input>
+</form> 

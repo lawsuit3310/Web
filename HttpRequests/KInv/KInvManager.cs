@@ -121,11 +121,15 @@ namespace HttpRequests.KInv
 			return result;
 		}
 		
-		//한투 서버에 주식 종목정보를 조회하는 함수
-		public static async Task<Stock> Inquiry(Stock stock)
+		//한투 서버에 주식 상세 정보를 조회하는 함수
+		public static async Task<string> InquiryStockInfo(Stock stock)
 		{
-			string subUrl = "/uapi/domestic-stock/v1/quotations/search-info";
-			string url = baseUrl + subUrl + $"?PDNO={"475150"}&PRDT_TYPE_CD={300}";
+			string result = "";
+			
+			string subUrl = "/uapi/domestic-stock/v1/quotations/search-stock-info";
+			string url = baseUrl + subUrl + $"?PDNO={stock.Ticker}&PRDT_TYPE_CD={300}";
+			
+			//Console.WriteLine(url);
 			
 			HttpClient cli = new ();
 			HttpResponseMessage response = default;
@@ -143,7 +147,7 @@ namespace HttpRequests.KInv
 					cli.DefaultRequestHeaders.Add ("authorization", "Bearer " + await GetTokenAsync(keysecret[0], keysecret[1]));	
 					cli.DefaultRequestHeaders.Add("appkey", keysecret[0]);
 					cli.DefaultRequestHeaders.Add("appsecret", keysecret[1]);
-					cli.DefaultRequestHeaders.Add("tr_id", "CTPF1604R");
+					cli.DefaultRequestHeaders.Add("tr_id", "CTPF1002R");
 					cli.DefaultRequestHeaders.Add("custtype", "P");
 
 					response = await cli.GetAsync(url);
@@ -153,12 +157,57 @@ namespace HttpRequests.KInv
 					Console.WriteLine("Error Occured " + e.Message);
 				}
 				var resJson = await response.Content.ReadAsStringAsync();
+				result = resJson;
 				
-				Console.WriteLine(resJson);
+				//Console.WriteLine(resJson);
+			}
+			return result;
+		}
+		
+		//주식 시세 조회
+		public static async Task<Stock> InquiryStockPrice(Stock stock)
+		{
+			string subUrl = "/uapi/domestic-stock/v1/quotations/inquire-price";
+			string url = baseUrl + subUrl + $"?FID_INPUT_ISCD={stock.Ticker}&FID_COND_MRKT_DIV_CODE={"J"}";
+			
+			//Console.WriteLine(url);
+			
+			HttpClient cli = new ();
+			HttpResponseMessage response = default;
+			JObject jobject = default;
+			{
+				string stock_info = "";
+				try
+				{
+					var keysecret = await GetKeySecret();
+					
+					cli.DefaultRequestHeaders
+						  .Accept
+						  .Add(new MediaTypeWithQualityHeaderValue("application/json"));
+					
+					cli.DefaultRequestHeaders.Add ("authorization", "Bearer " + await GetTokenAsync(keysecret[0], keysecret[1]));	
+					cli.DefaultRequestHeaders.Add("appkey", keysecret[0]);
+					cli.DefaultRequestHeaders.Add("appsecret", keysecret[1]);
+					cli.DefaultRequestHeaders.Add("tr_id", "FHKST01010100");
+					cli.DefaultRequestHeaders.Add("custtype", "P");
+
+					response = await cli.GetAsync(url);
+				}
+				catch (Exception e)
+				{
+					Console.WriteLine("Error Occured " + e.Message);
+				}
+				var resJson = await response.Content.ReadAsStringAsync();
 				jobject = JObject.Parse(resJson);
+				jobject = JObject.Parse(jobject["output"].ToString());
 				
+				stock.stck_prpr = Convert.ToInt32(jobject["stck_prpr"].ToString());
+				stock.prdy_vrss = Convert.ToInt32(jobject["prdy_vrss"].ToString());
+				stock.w52_hgpr = Convert.ToInt32(jobject["w52_hgpr"].ToString());
+				stock.w52_lwpr = Convert.ToInt32(jobject["w52_lwpr"].ToString());
 				
-				
+				//Console.WriteLine(resJson);
+				//Console.WriteLine(Convert.ToInt32(jobject["stck_prpr"].ToString()));
 			}
 			return stock;
 		}

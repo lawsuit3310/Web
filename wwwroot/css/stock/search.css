@@ -9,5 +9,5 @@
 .content table td.name {width : 50%;}
 .content table td.market {width : 25%;}
 
-.table.title, .table.title td { width : 100%; font-size : 1.6em; font-weight : bold; border-style : none;}
-.table.title tr {height : 50px; width : 100%;}
+.table.title, .table.title td { width : 100%; background-color : #191919; font-size : 1.6em; font-weight : bold; border-style : none;}
+.table.title tr {height : 50px; width : 100%; }
