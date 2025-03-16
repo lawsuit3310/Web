@@ -13,6 +13,10 @@ public class Stock
 	public int Price {get;}
 	public int Issued_Share {get;}
 	
+	public int Price_Now = 0;
+	public int Price_Highest_Y = 0;
+	public int Price_Lowest_Y = 0;
+	
 	public Stock(string i, string t, string k, string s, string e, string l, string m, string p, string sec, string ki, int pr, int sh)
 	{
 		ISIN = i;

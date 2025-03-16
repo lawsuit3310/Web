@@ -1,0 +1,9 @@
+@model Stock
+@using System
+@using HttpRequests.KInv
+
+@{
+    Layout = "_Layout";
+}
+
+@KInvManager.Inquiry(Model).Result.KR_Name

@@ -24,7 +24,7 @@
 			</tbody></table>
 			@foreach (var stock in Model)
 			{
-				<a asp-controller = "Home" asp-action = "Index" method = "get">
+				<a href = "/Stock/Info?ISIN=@stock.ISIN" method = "get">
 					<table><tbody>
 						<tr>
 							<td class = "code"><span>@stock.Ticker</span></td>

@@ -11,7 +11,14 @@ public class StockController : Controller
 	public IActionResult Search(string query)
 	{
 		SqlConnector con = HttpContext.RequestServices.GetService(typeof(SqlConnector)) as SqlConnector;
-		var collection = con.Select("like '%" + query + "%'");
+		var collection = con.SelectByName("like '%" + query + "%'");
 		return View(collection);
 	}// This action method handles the search functionality for stock items.
+	
+	public IActionResult Info(string ISIN)
+	{
+		SqlConnector con = HttpContext.RequestServices.GetService(typeof(SqlConnector)) as SqlConnector;
+		var stock = con.SelectByISIN(ISIN);
+		return View(stock);
+	}
 }
