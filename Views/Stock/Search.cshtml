@@ -1,0 +1,39 @@
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model System.Collections.Generic.List<Stock>
+@using System
+
+<link rel = "stylesheet" href = "~/css/stock/search.css">
+
+@{
+    Layout = "_Layout";
+}
+@{
+	if (Model.Count <= 0)
+	{
+		<h1>결과가 없습니다.</h1>
+	}
+	else
+	{
+		<div class = "searchResult">
+			<table class = "table title"><tbody>
+				<tr>
+					<td class = "code"><span>종목 코드</span></td>
+					<td class = "name"><span>종목명</span></td>
+					<td class = "market"><span>시장 구분</span></td>
+				</tr>
+			</tbody></table>
+			@foreach (var stock in Model)
+			{
+				<a asp-controller = "Home" asp-action = "Index" method = "get">
+					<table><tbody>
+						<tr>
+							<td class = "code"><span>@stock.Ticker</span></td>
+							<td class = "name"><span>@{var s = stock.KR_Name.Length > 10 ? stock.Short_Name : stock.KR_Name;} @s</span></td>
+							<td class = "market"><span>@stock.Market</span></td>
+						</tr>
+					</tbody></table>
+				</a>
+			}
+		</div>
+	}
+}

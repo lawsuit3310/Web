@@ -1,2 +1,35 @@
-<h1> Layout </h1>
-@RenderBody()
+<head>
+	<!-- 모바일에서 화면 확대 못하게 막음 -->
+	<meta name="viewport" content="initial-scale=0.35; maximum-scale=0.35; minimum-scale=0.35; user-scalable=no;" /> 
+	<link rel = "stylesheet" href = "~/css/Layout.css">
+	<script src="~/lib/jquery/dist/jquery.min.js"></script>
+	<script src = "~/js/menu.js"></script>
+	<title>Lawsuit3310</title>
+</head>
+<body>
+	<header class = "header">
+		<span class = "logo">헤더입니다</span>
+		<div class = "menubtn">
+			<span ontouchend = "menuToggle();"></span>
+		</div>
+	</header>
+	<div class = "menu">
+		<div class = "menubtn">
+			<span ontouchend = "menuToggle();"></span>
+		</div>
+		<div class = "clearfix">
+		</div>
+		<ul style = "color : white">
+			<li><a><span>메뉴 1</span></a></li>
+			<li><a><span>메뉴 2</span></a></li>
+			<li><a><span>메뉴 3</span></a></li>
+		</ul>
+	</div>
+	<div class = "wrapper">
+		<div class = "content">
+			@RenderBody()
+		</div>
+	</div>
+	<footer class = "footer">
+	</footer>
+</body>

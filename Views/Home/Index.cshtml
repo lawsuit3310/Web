@@ -1,5 +1,10 @@
+<link rel = "stylesheet" href = "~/css/home/index.css">
+
 @{
     Layout = "_Layout";
 }
 
-<h2> Index Page </h2>
+<form asp-controller = "Stock" asp-action = "Search" method = "get">
+	<input type = "text" name="query" placeholder="Search..."></input>
+	<input type = "submit" value = "조회" class = "btn"></input>
+</form> 

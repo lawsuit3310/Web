@@ -1,0 +1,13 @@
+.content .searchResult { border-radius : 20px; overflow : hidden;  background-color : #222225; padding : 3%;}
+
+.content a {display : block; text-decoration: none; padding-bottom : 1px; background-image:linear-gradient(90deg, #222225, grey 25%, grey 75% , #222225);}
+.content table{ width : 100%; background-color : #222225;}
+
+.content table tr {height : 190px; text-align: left;  width : 100%; }
+.content table td {padding : 3%; color : white; font-size : 2em; border : none; margin : 0;}
+.content table td.code {width : 25%; font-weight : bold;}
+.content table td.name {width : 50%;}
+.content table td.market {width : 25%;}
+
+.table.title, .table.title td { width : 100%; font-size : 1.6em; font-weight : bold; border-style : none;}
+.table.title tr {height : 50px; width : 100%;}
