@@ -1,7 +1,11 @@
 using System;
+using System.Text;
 using System.Web;
 using MySql.Data.MySqlClient;
 using Microsoft.AspNetCore.Mvc;
+
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 using SqlTasks;
 
@@ -14,17 +18,17 @@ public class StockController : Controller
 		//var collection = con.Select("true");
 		return View();
 	}
-	public IActionResult Search(string query)
+	public string Search(string query)
 	{
 		SqlConnector con = HttpContext.RequestServices.GetService(typeof(SqlConnector)) as SqlConnector;
-		var collection = con.SelectByName("like '%" + query + "%' ");
-		return View(collection);
+		var collection = new StockCollection(con.SelectByName("like '%" + query + "%' "));
+		return collection.ToJson();
 	}// This action method handles the search functionality for stock items.
 	
-	public IActionResult Info(string ISIN)
+	public string Info(string ISIN)
 	{
 		SqlConnector con = HttpContext.RequestServices.GetService(typeof(SqlConnector)) as SqlConnector;
 		var stock = con.SelectByISIN(ISIN);
-		return View(stock);
+		return "info";
 	}
 }
