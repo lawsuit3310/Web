@@ -10,7 +10,27 @@
 		<input type = "text" class = "search_box"  name="query" placeholder="Search..."></input>
 	</div>
 </div>
-<div class = "stockList">
+
+<div class = "context_wrapper">
+	<div class = "stock_home context active" >
+		<div class = "charts">
+			<canvas id="KOSPI" width="400" height="400"></canvas>
+			<canvas id="KOSDAQ" width="400" height="400"></canvas>
+			<canvas id="NASDAQ" width="400" height="400"></canvas>
+			<canvas id="SNP500" width="400" height="400"></canvas>
+			<canvas id="DWJS" width="400" height="400"></canvas>
+			<canvas id="NIKKEI" width="400" height="400"></canvas>
+		</div>
+	</div>
+	<div class = "stock_list context">
+	
+	</div>
+	<div class = "stock_info context">
+	
+	</div>
 </div>
 
+<script src = "~/js/stock/investment.js"></script>
 <script src = "~/js/stock/search.js"></script>
+<script src = "~/js/stock/info.js"></script>
+<script src = "~/js/stock/charManager.js"></script>

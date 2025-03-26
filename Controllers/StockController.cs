@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 using SqlTasks;
+using HttpRequests.KInv;
 
 public class StockController : Controller
 {
@@ -30,5 +31,12 @@ public class StockController : Controller
 		SqlConnector con = HttpContext.RequestServices.GetService(typeof(SqlConnector)) as SqlConnector;
 		var stock = con.SelectByISIN(ISIN);
 		return "info";
+	}
+	
+	public string MarketIndex(string market)
+	{
+		SqlConnector con = HttpContext.RequestServices.GetService(typeof(SqlConnector)) as SqlConnector;
+		var json = KInvManager.GetMarketIndex(market).Result;
+		return json;
 	}
 }

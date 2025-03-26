@@ -170,7 +170,7 @@ namespace HttpRequests.KInv
 			string subUrl = "/uapi/domestic-stock/v1/quotations/inquire-price";
 			string url = baseUrl + subUrl + $"?FID_INPUT_ISCD={stock.Ticker}&FID_COND_MRKT_DIV_CODE={"J"}";
 			
-			//Console.WriteLine(url);
+			Console.WriteLine(url);
 			
 			HttpClient cli = new ();
 			HttpResponseMessage response = default;
@@ -185,7 +185,7 @@ namespace HttpRequests.KInv
 						  .Accept
 						  .Add(new MediaTypeWithQualityHeaderValue("application/json"));
 					
-					cli.DefaultRequestHeaders.Add ("authorization", "Bearer " + await GetTokenAsync(keysecret[0], keysecret[1]));	
+					cli.DefaultRequestHeaders.Add ("authorization", "Bearer " + await GetTokenAsync(keysecret[0], keysecret[1]) + " ");	
 					cli.DefaultRequestHeaders.Add("appkey", keysecret[0]);
 					cli.DefaultRequestHeaders.Add("appsecret", keysecret[1]);
 					cli.DefaultRequestHeaders.Add("tr_id", "FHKST01010100");
@@ -210,6 +210,64 @@ namespace HttpRequests.KInv
 				//Console.WriteLine(Convert.ToInt32(jobject["stck_prpr"].ToString()));
 			}
 			return stock;
+		}
+		
+		//지수 조회
+		public async static Task<string> GetMarketIndex(string market)
+		{
+			//Dictionary<string, string> result = new ();	
+			string result = "";
+			string subUrl = "/uapi/domestic-stock/v1/quotations/inquire-index-daily-price";
+			string url = baseUrl + subUrl +
+				$"?FID_COND_MRKT_DIV_CODE=U&FID_INPUT_ISCD=0001&fid_input_date_1={DateTime.Today.ToString("yyyyMMdd")}&fid_period_div_code=W";
+			
+			Console.WriteLine(url);
+			
+			HttpClient cli = new ();
+			HttpResponseMessage response = default;
+			JObject jobject = default;
+			{
+				string stock_info = "";
+				try
+				{
+					var keysecret = await GetKeySecret();
+					
+					cli.DefaultRequestHeaders
+						  .Accept
+						  .Add(new MediaTypeWithQualityHeaderValue("application/json"));
+					
+					cli.DefaultRequestHeaders.Add ("authorization", "Bearer " + await GetTokenAsync(keysecret[0], keysecret[1]));	
+					cli.DefaultRequestHeaders.Add("appkey", keysecret[0]);
+					cli.DefaultRequestHeaders.Add("appsecret", keysecret[1]);
+					cli.DefaultRequestHeaders.Add("tr_id", "FHPUP02120000");
+					//cli.DefaultRequestHeaders.Add("tr_cont", "");
+					cli.DefaultRequestHeaders.Add("custtype", "P");
+
+					response = await cli.GetAsync(url);
+				}
+				catch (Exception e)
+				{
+					Console.WriteLine("Error Occured " + e.Message);
+				}
+				var resJson = await response.Content.ReadAsStringAsync();
+				jobject = JObject.Parse(resJson);
+				
+				result = resJson;
+				
+				//Console.WriteLine(jobject.ToString());
+				//Console.WriteLine(Convert.ToInt32(jobject["stck_prpr"].ToString()));
+			}
+			
+			//국내
+			if (market == "KOSPI" || market == "KOSDAQ")
+			{
+				
+			}
+			//해외
+			else
+			{
+			}
+			return result;
 		}
 	}
 }
