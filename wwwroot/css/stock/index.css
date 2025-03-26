@@ -1,21 +1,82 @@
+.context span {text-decoration:none;}
+
 .searcher {width : 90%; height : 10%; padding-bottom : 1px; background-image : linear-gradient(90deg, #111112, grey 50%, #111112)}
+.number {font-family: 'Paperlogy-5Medium';}
 
-input.search_box { color : grey; border-bottom : 1px solid grey; padding : 1%; }
+.searcher * {float : left; margin-right : 2%;}
+.searcher .index {width : 16%; height : 100%;  border-radius : 30px 30px 30px 30px; background-image : url("/media/img/ico_home.png");
+	background-repeat : no-repeat; background-size : cover; background-color : #232326;}
+input.search_box { color : grey; border-bottom : 1px solid grey; border : none;  border-radius : 30px 30px 30px 30px; width : 80%; height : 100%;  font-size : 3em; background-color:#222; margin : 0;}
 input.search_box * {color : inherit;  border-bottom : none;}
-input.search_box { border : none;  border-radius : 30px 30px 30px 30px; width : 100%; height : 100%;  font-size : 3em; background-color:#222; margin : 0;}
-
-.context_wrapper { width : 90%; border-radius : 30px; background-image : linear-gradient(90deg, #232329, grey 50%, #232329);}
+.context_wrapper { width : 95%; height : auto; border-radius : 30px; overflow : hidden; background-image : linear-gradient(90deg, #232326 6.25%, grey 50%, #232326 93.75%);}
 .context_wrapper ul {list-style: none;}
 
-.stock_list  { display: none; border-radius : 30px; overflow : hidden;}
 .context.active {display : block;}
-.context * { border : none;}
+.context { display : none;}
 
+.stock_list  { border-radius : 30px; overflow : hidden; transition : all 1s;}
 .stock_list .stock { color : #9a9a9f; border : none; background-color : #232326; margin-bottom : 2px;}
 .stock_list .stock * {color : inherit;}
-.stock_list .stock table { height : 10%; width : 100%; border : none; font-size : 2em;}
+.stock_list .stock table { height : 10%; width : 100%; border : none; font-size : 3em;}
 .stock_list .stock table * { border : inherit;}
 .stock_list .stock table td {width : 30%; padding : 1.25%;}
+
+.stock_home {}
+.stock_home .title {display : block; font-size : 3em; padding : 5% 5%; border-radius : 30px 30px 30px 30px; text-align : left; color : #cccccc; background-color : #232326;}
+
+.balance_preview {width : 100%; margin-top : -1px; height : 13%; background-color : #232326; margin-bottom : 2px; border-radius : 30px 30px 30px 30px; cursor: pointer;}
+.balance_preview .title {display : block; font-size : 3em; padding : 5% 5% 2% 8%; border-radius : 30px 30px 30px 30px; text-align : left; color : #cccccc; background-color : #232326;}
+.balance_preview .balance {display : block; color : #cccccc; width : 100%; padding : 2% 12%; text-align : right; font-size : 2.4em;}
+.balance_preview .Currency {font-size : 1em;  margin-right : 5%}
+.balance_preview .difference {font-family : inherit; font-size : 1em;}
+
+.charts {background-color : #232326; margin-bottom:2px; height : 40%;  border-radius : 0px 0px 30px 30px; padding-bottom : 10px;}
+.charts::-webkit-scrollbar {display: none;}
+.charts .chart_wrapper {z-index: 1; margin-left : 2%; margin-top : 3%; width : 47%; height : 28%; float : left;}
+.charts .chart_wrapper .legend {font-size : 1.8em; color : #cccccc;}
+.charts .chart_wrapper .chart {width : 100%; height : 100%;}
+
+.general_product {width : 100%; height : 20%; color : #ccc; margin-bottom : 5px; }
+.general_product ul {width : 100%; height : 100%;}
+.general_product * {display : block; font-size : 1.2em;}
+.general_product li {position : relative;  padding : 5%;  height : 50%; margin-bottom : 2px; font-size : 1.2em; background-color : #232326;}
+.general_product li > span {width : 50%; height : 100%; float : left; display: flex; align-items: center; justify-content: center; }
+.general_product span.prod_title { width : 30%;}
+.general_product span.price_dif { width : 20%; font-family: 'Paperlogy-5Medium';}
+.general_product span.price { font-family: 'Paperlogy-5Medium';}
+
+.exchange_rate {width : 100%; height : auto; color : #ccc;  margin-bottom : 2px; }
+.exchange_rate ul {width : 100%; height : 18%;}
+.exchange_rate * {display : block; font-size : 1.2em;}
+.exchange_rate li {position : relative;  padding : 5%;  height : 33.4%; font-size : 1.2em; background-color : #232326;}
+.exchange_rate li span {transform : translateY(-55%); text-align : center; width : 30%; height : 100%; padding : 2%; float : left;}
+.exchange_rate li span.item_amt {width : 40%;  text-align : right; padding-right : 5%;}
+.exchange_rate li span.dif { text-align : right; padding-right : 8%;}
+
+.stock_info {position : relative;}
+.stock_info .title { width : auto; height : 10%; overflow : visible; display : block;  font-size : 3.5em; padding : 0% 8%; margin-bottom : 2px; border-radius : 30px 30px 30px 30px;
+	background-color : #232326; text-align : left; color : #cccccc;}
+.stock_info .title span {float : left; height : 100%; display : flex; justify-content: center; align-items: center;}
+.stock_info .title .industry { font-size : 0.5em; margin-left : 2%;  }
+.stock_info .info_chart { display : block; width : 100%; height : 400px; margin-bottom : 2px; }
+.stock_info .chart_selector{background-color : #232326; color : #ccc; font-size : 3em; height : 5%;}
+.stock_info .chart_selector span {font-family: 'Paperlogy-5Medium'; padding : 1%; display : block; width : 25%; float : left;}
+.stock_info table { margin-bottom : 2px; background-color : #232326; padding: 5% 8% 5% 8%; width : 100% ; height : auto; color : white; font-size : 2em;  border-radius : 0px 0px 30px 30px; }
+.stock_info table tr { background-color : #232326;}
+.stock_info table td {text-align : right;}
+.stock_info table th { width : 40%; text-align:left;}
+
+.balance_list { border-radius : 30px; margin-top : -1px; overflow : hidden; transition : all 1s; height : auto; }
+.balance_list > div {margin-top : -1px; float : left; font-size : 3.5em; height : 12%;}
+.balance_list > div > * { float : left; display : block; transform : translateY(40%); height : 100%;}
+.balance_list .balance {display : block;  color : #cccccc; background-color : #232326; margin-bottom : 2px; width : 70%; padding-right : 12%; text-align : right; }
+.balance_list .balance span {text-align : right;}
+.balance_list .title {display : block;  color : #cccccc; background-color : #232326; margin-bottom : 2px; width : 30%; padding-left : 5%;}
+.balance_list .bal_chart {width : 900px; height : 400px;}
+.balance_list li {cursor : pointer} 
+.balance_list table {color : #ccc; width : 95%; height : 8%; margin-bottom : 2px; padding : 3% 8%; background-color : #232326; font-size : 1.5em;} 
+.balance_list table th {width : 61%; height : 100%; text-align : left;  }
+.balance_list table td {width : 13%; height : 100%; text-align : center;}
 
 
 

@@ -26,7 +26,11 @@ public class StockCollection
 			result += $" \"Section\":\"{stock.Section}\",";
 			result += $" \"Kind\":\"{stock.Kind}\", ";
 			result += $" \"Issued_Share\":\"{stock.Issued_Share}\",";
-			result += $" \"Industry\":\"{stock.Industry}\"}}";
+			result += $" \"Industry\":\"{stock.Industry}\",";
+			result += $" \"stck_prpr\":\"{stock.stck_prpr}\",";
+			result += $" \"prdy_vrss\":\"{stock.prdy_vrss}\",";
+			result += $" \"w52_hgpr\":\"{stock.w52_hgpr}\",";
+			result += $" \"w52_lwpr\":\"{stock.w52_lwpr}\"}}";
 			index += 1;
 			if (index < collection.Count)
 				result += ",";

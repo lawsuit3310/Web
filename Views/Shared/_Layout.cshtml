@@ -1,10 +1,13 @@
 <head>
 	<!-- 모바일에서 화면 확대 못하게 막음 -->
-	<meta name="viewport" content="initial-scale=0.35; maximum-scale=0.35; minimum-scale=0.35; user-scalable=no;" /> 
+	<meta name="viewport" content="initial-scale=0.35, maximum-scale=0.35, minimum-scale=0.35, user-scalable=no" /> 
 	<meta charset="utf-8" /> 
 	<link rel = "stylesheet" href = "~/css/Layout.css">
-	<script src="~/lib/jquery/dist/jquery.min.js"></script><
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+	<script src="~/lib/jquery/dist/jquery.min.js"></script>
+	<!--script type= "module" src="~/lib/polyfill/classList.min.js"></script>
+	<script type= "module" src="~/lib/polyfill/resize-observer-polyfill/dist/ResizeObserver.js"></script>
+	<script type= "module" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.js"></script-->
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 	<script src = "~/js/menu.js"></script>
 	<title>Lawsuit3310</title>
 </head>
@@ -32,6 +35,4 @@
 			@RenderBody()
 		</div>
 	</div>
-	<footer class = "footer">
-	</footer>
 </body>

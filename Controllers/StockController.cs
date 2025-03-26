@@ -26,17 +26,88 @@ public class StockController : Controller
 		return collection.ToJson();
 	}// This action method handles the search functionality for stock items.
 	
-	public string Info(string ISIN)
+	public string Info(string ticker, string type = "")
 	{
-		SqlConnector con = HttpContext.RequestServices.GetService(typeof(SqlConnector)) as SqlConnector;
-		var stock = con.SelectByISIN(ISIN);
-		return "info";
+		var result = "";
+		type = type.ToLower();
+		
+		switch (type)
+		{
+			case "bond":
+				result = KInvManager.GetBondInfo(ticker).Result;
+				break;
+				
+			case "ef":
+			case "st":
+			default :
+				result = KInvManager.InquiryStockInfo(ticker).Result;
+				break;
+		}
+		return result;
+	}
+	
+	public string Price(string ticker, string type = "")
+	{
+		var result = "";
+		type = type.ToLower();
+		
+		switch (type)
+		{
+			case "ef":
+				result = KInvManager.InquiryETFPrice(ticker).Result;
+				break;
+			case "bond":
+				result = KInvManager.GetBondPrice(ticker).Result;
+				break;
+			case "st":
+			default :
+				result = KInvManager.InquiryStockPrice(ticker).Result;
+				break;
+		}
+		return result;
+	}
+	
+	public string DailyPrice(string ticker, string type = "")
+	{
+		var result = "";
+		result = KInvManager.InquiryDailyStockPrice(ticker, type).Result;
+		return result;
+	}
+	
+	public string FinancialRatio(string ticker)
+	{
+		var result = KInvManager.FinancialRatio(ticker).Result;
+		return result;
+	}
+	
+	public string BalanceSheet(string ticker)
+	{
+		var result = KInvManager.BalanceSheet(ticker).Result;
+		return result;
+	}
+	
+	public string Exchange(string item)
+	{
+		var result = KInvManager.GetExchangeRate(item).Result;
+		return result;
 	}
 	
 	public string MarketIndex(string market)
 	{
 		SqlConnector con = HttpContext.RequestServices.GetService(typeof(SqlConnector)) as SqlConnector;
 		var json = KInvManager.GetMarketIndex(market).Result;
+		return json;
+	}
+	
+	public string Balance()
+	{
+	    var json = KInvManager.GetBalance().Result;
+        return json;
+    }
+	
+	public string GeneralProductInfo()
+	{
+		var json = KInvManager.GetGeneralPriceInfo().Result;
 		return json;
 	}
 }

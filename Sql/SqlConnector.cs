@@ -4,6 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 using MySql.Data.MySqlClient;
 
+using HttpRequests.KInv;
+
 namespace SqlTasks
 {
 	
@@ -20,6 +22,10 @@ namespace SqlTasks
 		private MySqlConnection GetConnection()
 		{
 			return new MySqlConnection(connectionString);
+		}
+		private MySqlConnection GetConnection(string constring)
+		{
+			return new MySqlConnection(constring);
 		}
 		
 		public List<Stock> SelectByName(string query)
@@ -124,6 +130,43 @@ namespace SqlTasks
 			
 			return result;
 			
+		}
+		
+		public (string, DateTime) SelectTokenInfo(string appkey, string appsecret)
+		{
+			var con = GetConnection("Server = localhost; Database=user; User Id=asp; Password=041008;");
+			con.Open();
+			
+			string queryString = $"select access_token, access_token_token_expired from authorization where appkey = '{appkey}' and appsecret = '{appsecret}' ";
+			var cmd = new MySqlCommand(queryString, con);
+			
+			var result = ("", DateTime.Now);
+			
+			using(var reader = cmd.ExecuteReader())
+			{
+				reader.Read();
+				
+				var expired_date = DateTime.Parse(reader["access_token_token_expired"].ToString());
+				if (expired_date.AddDays(1) > DateTime.Now)
+				{
+					result = (reader["access_token"].ToString(), expired_date.AddDays(-1));
+				}
+			}
+			
+			con.Close();
+			
+			return result;
+		}
+		
+		public void UpdateToken(string appkey, string appsecret, string token, DateTime token_expired)
+		{
+			var con = GetConnection("Server = localhost; Database=user; User Id=asp; Password=041008;");
+			con.Open();
+			
+			string queryString = $"update authorization set access_token = '{token}', access_token_token_expired = '{token_expired.ToString("yyyy-MM-dd hh:mm:ss")}' where appkey = '{appkey}' and appsecret = '{appsecret}'";
+			var cmd = new MySqlCommand(queryString, con);
+			cmd.ExecuteNonQuery();
+			con.Close();
 		}
 	}
 }

@@ -7,19 +7,57 @@
 }
 <div class = "searcher">
 	<div style = "width : 100%; height : 100%; padding-bottom : 5%; background-color : #111112;">
-		<input type = "text" class = "search_box"  name="query" placeholder="Search..."></input>
+		<div class = "index"></div><input type = "text" class = "search_box"  name="query" placeholder="Search..."></input>
 	</div>
 </div>
 
 <div class = "context_wrapper">
 	<div class = "stock_home context active" >
+		<div class = "balance_preview">
+			<div>
+				<span class = "title">투자 현황</span>
+				<span class = "balance number">0원 - 0</span><span></span><span></span><span></span>
+			</div>
+		</div>
+		<span class = "title">1년 간 증시</span>
 		<div class = "charts">
-			<canvas id="KOSPI" width="400" height="400"></canvas>
-			<canvas id="KOSDAQ" width="400" height="400"></canvas>
-			<canvas id="NASDAQ" width="400" height="400"></canvas>
-			<canvas id="SNP500" width="400" height="400"></canvas>
-			<canvas id="DWJS" width="400" height="400"></canvas>
-			<canvas id="NIKKEI" width="400" height="400"></canvas>
+			<div class = "chart_wrapper">
+				<h1 class = "legend">KOSPI</h1>
+				<div id = "KOSPI" class = "chart"></div>
+			</div>
+			<div class = "chart_wrapper">
+				<h1 class = "legend">KOSDAQ</h1>
+				<div id = "KOSDAQ" class = "chart"></div>
+			</div>
+			<div class = "chart_wrapper">
+				<h1 class = "legend">NASDAQ</h1>
+				<div id = "NASDAQ" class = "chart"></div>
+			</div>
+			<div class = "chart_wrapper">
+				<h1 class = "legend">다우존스 산업지수</h1>
+				<div id = "DJI" class = "chart"></div>
+			</div>
+			<div class = "chart_wrapper">
+				<h1 class = "legend">S&P 500</h1>
+				<div id = "SPX" class = "chart"></div>
+			</div>
+			<div class = "chart_wrapper">
+				<h1 class = "legend">NIKKEI 225</h1>
+				<div id = "NIKKEI" class = "chart"></div>
+			</div>
+		</div>
+		<div class = "general_product">
+			<ul>
+				<li class = "gold clearfix"><span class = "prod_title gold_title">금(1kg)</span><span class = "price gold_price">0</span><span class = "price_dif gold_price_dif">- 0</span></li>
+				<li class = "oil clearfix"><span class = "prod_title oil_title">유가(1bbl)</span><span class = "price oil_price">0</span><span class = "price_dif oil_price_dif">- 0</span></li>
+			</ul>
+		</div>
+		<div class = "exchange_rate">
+			<ul>
+				<li class = "KRW clearfix"><span class = "item_name">원 - 달러</span><span class = "number item_amt">0</span><span class = "number dif">- 0</span></li>
+				<li class = "KRWJS clearfix"><span class = "item_name">100원 - 엔</span><span class = "number item_amt">0</span><span class = "number dif">- 0</span></li>
+				<li class = "JPY clearfix"><span class = "item_name">엔 - 달러</span><span class = "number item_amt">0</span><span class = "number dif">- 0</span></li>
+			</ul>
 		</div>
 	</div>
 	<div class = "stock_list context">
@@ -28,9 +66,16 @@
 	<div class = "stock_info context">
 	
 	</div>
+	
+	<div class = "balance_list context">
+	
+	</div>
 </div>
 
 <script src = "~/js/stock/investment.js"></script>
-<script src = "~/js/stock/search.js"></script>
+<script src = "~/js/stock/generalProduct.js"></script>
 <script src = "~/js/stock/info.js"></script>
-<script src = "~/js/stock/charManager.js"></script>
+<script src = "~/js/stock/search.js"></script>
+<script src = "~/js/stock/balance.js"></script>
+<script src = "~/js/stock/chartManager.js"></script>
+<script src = "~/js/stock/exchangeRate.js"></script>
