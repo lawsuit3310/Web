@@ -74,7 +74,7 @@ async function ShowBalance(event)
 	var i = [0];
 	
 	//현재 주식 잔고 항목을 ul로
-	html = `<div class = "title"><span>총 금액</span></div><div class = "balance"></div>`+
+	html = `<div class = "title"><span>총 금액</span></div><div style = "font-size : 0.8em;" class = "balance"></div>`+
 		`<div ID = "bal_chart"class = "bal_chart"></div>`+
 		`<ul><li><table><tr><th class = "number">종목명</th><td>평가액</td><td>수량</td><td>손익</td></tr></table></li>`;
 	keys = Object.keys(x["output1"]);
@@ -130,8 +130,6 @@ async function ShowBalance(event)
 				data["채권"] += bond_tot_now_amt;
 	}
 	
-	console.log(data)
-	
 	html += "</ul>";
 	
 	//적용
@@ -174,7 +172,7 @@ PrintBalance = async () =>
 		x[0] += 1
 		$('.balance').html(`<span class = "number"> ${Math.round(amt_now * (x[0]/17)).toLocaleString()} </span>`+
 						   `<span class = "Currency">원</span><span style = "color : `+
-						   `${difference > 0 ? '#bb3322' : difference == 0 ? 'grey' : '#3344bb'}" class = "difference">`+
+						   `${difference > 0 ? '#bb3322' : difference == 0 ? 'grey' : '#3344bb'}; " class = "difference">`+
 						   `${difference > 0 ? '  ▲  ' : difference == 0 ? '  -  ' : '  ▼  ' } ${Math.round(difference * (x[0]/17))}</span>`);
 		if(x[0] == 17)
 		{			
@@ -194,38 +192,44 @@ function DrawChartBalance (x)
 	
 	google.charts.load('current', {'packages':['corechart']});
  	google.charts.setOnLoadCallback( async () =>
-	{		
+	{			
 		var original = x;
-		var table = new google.visualization.DataTable();
-		var options = {
-			backgroundColor :  '#232326',
-			displayRangeSelector : false,
-			displayZoomButtons : false,
-			legend : {
-				position : 'right',
-				textStyle : {
-					color : '#ccc'
-					
-				}
-			},
-			width : 900,
-			height : 400,
-			lineWidth : 1
-		}
-
 		var row = [];
 		var keys = Object.keys(original);
+		
+		var table = new google.visualization.DataTable();
+		var table_empty = new google.visualization.DataTable();
+		var options = {
+			'pieHole': 0.4,
+			'backgroundColor' :  '#232326',
+			'forceIFrame' : true,
+			'sliceVisibilityThreshold' : .05,
+			'legend' : {
+				'position' : 'right',
+				'textStyle' : {
+					'color' : '#ccc',
+					'fontSize' : 28
+				}
+			},
+			'fontName' : 'Paperlogy-8ExtraBold',
+			'chartArea': {'width': '120%', 'height': '100%'},
+			'left' : '-1000px',
+			'width' : 900,
+			'height' : 400,
+			'lineWidth' : 0,
+			'fontSize' : 28,
+		}
+
 		
 		for (i = 0; i < keys.length; i++)
 		{
 			row.push([keys[i], Number(original[keys[i]])]);
-			console.log(keys[i]);
 		}
-		console.log(row);
 		table.addColumn('string', 'item');
 		table.addColumn('number', 'Price');
 		table.addRows(row);
 
+		// Pie chart는 애니메이션이 적용이 안된다고 함
 		var chart = new google.visualization.PieChart(document.getElementById('bal_chart'));
 		chart.draw(table, options);
 	});

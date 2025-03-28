@@ -44,4 +44,24 @@ public class Stock
 		Issued_Share = sh;
 		Industry = ind;
 	}
+	
+	public override string ToString()
+	{
+		var result = "{" 
+			+ $"\"ISIN\" : \"{ISIN}\","
+			+ $"\"Ticker\" : \"{Ticker}\","
+			+ $"\"KR_Name\" : \"{KR_Name}\","
+			+ $"\"Short_Name\" : \"{Short_Name}\","
+			+ $"\"EN_Name\" : \"{EN_Name}\","
+			+ $"\"Listing_Date\" : \"{Listing_Date}\","
+			+ $"\"Market\" : \"{Market}\","
+			+ $"\"Privacy\" : \"{Privacy}\","
+			+ $"\"Section\" : \"{Section}\","
+			+ $"\"Kind\" : \"{Kind}\","
+			+ $"\"Issued_Share\" : {Issued_Share},"
+			+ $"\"Industry\" : \"{Industry}\" "
+			+ "}";
+		
+		return result;
+	}
 }

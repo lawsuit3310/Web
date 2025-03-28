@@ -33,54 +33,69 @@ namespace SqlTasks
 			List<Stock> result = new ();
 			
 			var con = GetConnection();
-			string queryStringKR = $"select * from krx_complete where KR_Name {query} ";
-			string queryStringEN = $"select * from krx_complete where EN_Name {query} ";
+			string[] queryStringKRX = { $"select * from krx_complete where KR_Name {query} ",
+									 $"select * from krx_complete where EN_Name {query}",
+									 $"select * from krx_complete where Ticker {query}"};
+			string[] queryStringETF = {$"select * from etf where KR_Name {query} ",
+									 $"select * from etf where EN_Name {query} ",
+									 $"select * from etf where Ticker {query} " };
 			
 			con.Open();
 			
-			var cmd = new MySqlCommand(queryStringKR, con);
-			
-			using(var reader = cmd.ExecuteReader())
+			foreach(string _query in queryStringKRX )
 			{
-				while(reader.Read())
+				var cmd = new MySqlCommand(_query, con);
+			
+				using(var reader = cmd.ExecuteReader())
 				{
-					result.Add(new (
-						reader["ISIN"].ToString().Trim(),
-						reader["Ticker"].ToString().Trim(),
-						reader["KR_Name"].ToString().Trim(),
-						reader["Short_Name"].ToString().Trim(),
-						reader["EN_Name"].ToString().Trim(),
-						reader["Listing_Date"].ToString().Trim(),
-						reader["Market"].ToString().Trim(),
-						reader["Privacy"].ToString().Trim(),
-						reader["Section"].ToString().Trim(),
-						reader["kind"].ToString().Trim(),
-						Convert.ToInt32(reader["Issued_Share"].ToString()),
-						reader["Industry"].ToString()
-					));
+					while(reader.Read())
+					{
+						result.Add(new (
+							reader["ISIN"].ToString().Trim(),
+							reader["Ticker"].ToString().Trim(),
+							reader["KR_Name"].ToString().Trim(),
+							reader["Short_Name"].ToString().Trim(),
+							reader["EN_Name"].ToString().Trim(),
+							reader["Listing_Date"].ToString().Trim(),
+							reader["Market"].ToString().Trim(),
+							reader["Privacy"].ToString().Trim(),
+							reader["Section"].ToString().Trim(),
+							reader["kind"].ToString().Trim(),
+							Convert.ToInt32(reader["Issued_Share"].ToString()),
+							reader["Industry"].ToString()
+						));
+					}
 				}
 			}
 			
-			cmd.CommandText = queryStringEN;
-			
-			using(var reader = cmd.ExecuteReader())
+			foreach(string _query in queryStringETF )
 			{
-				while(reader.Read())
+				var cmd = new MySqlCommand(_query, con);
+			
+				using(var reader = cmd.ExecuteReader())
 				{
-					result.Add(new (
-						reader["ISIN"].ToString().Trim(),
-						reader["Ticker"].ToString().Trim(),
-						reader["KR_Name"].ToString().Trim(),
-						reader["Short_Name"].ToString().Trim(),
-						reader["EN_Name"].ToString().Trim(),
-						reader["Listing_Date"].ToString().Trim(),
-						reader["Market"].ToString().Trim(),
-						reader["Privacy"].ToString().Trim(),
-						reader["Section"].ToString().Trim(),
-						reader["kind"].ToString().Trim(),
-						Convert.ToInt32(reader["Issued_Share"].ToString()),
-						reader["Industry"].ToString()
-					));
+					while(reader.Read())
+					{
+						result.Add(new ETF (
+							reader["ISIN"].ToString().Trim(),
+							reader["Ticker"].ToString().Trim(),
+							reader["KR_Name"].ToString().Trim(),
+							reader["Short_Name"].ToString().Trim(),
+							reader["EN_Name"].ToString().Trim(),
+							reader["Listing_Date"].ToString().Trim(),
+							Convert.ToInt32(reader["Listed_Shares"].ToString()),
+							reader["Track_Index"].ToString().Trim(),
+							reader["Institution"].ToString().Trim(),
+							reader["Track_Times"].ToString().Trim(),
+							reader["Copy_Type"].ToString().Trim(),
+							reader["Base_Market_Div"].ToString().Trim(),
+							reader["Base_Asset_Div"].ToString().Trim(),
+							reader["Corp"].ToString().Trim(),
+							Convert.ToInt32(reader["CU_Count"].ToString()),
+							Convert.ToSingle(reader["Reward"].ToString()),
+							reader["Tax_Type"].ToString().Trim()
+						));
+					}
 				}
 			}
 			

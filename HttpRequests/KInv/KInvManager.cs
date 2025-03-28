@@ -348,6 +348,45 @@ namespace HttpRequests.KInv
 			return resJson;
 		}
 		
+		//손익 계산서 조회
+		public static async Task<string> IncomeStatement(string ticker)
+		{
+			string subUrl = "/uapi/domestic-stock/v1/finance/income-statement";
+			string url = baseUrl + subUrl + $"?FID_DIV_CLS_CODE={0}&fid_cond_mrkt_div_code={"J"}&fid_input_iscd={ticker}";
+			
+			//Console.WriteLine(url);
+			
+			HttpClient cli = new ();
+			HttpResponseMessage response = default;
+			JObject jobject = default;
+			var resJson = "";
+			{
+				string stock_info = "";
+				try
+				{
+					var keysecret = await GetKeySecret();
+					
+					cli.DefaultRequestHeaders
+						  .Accept
+						  .Add(new MediaTypeWithQualityHeaderValue("application/json"));
+					
+					cli.DefaultRequestHeaders.Add ("authorization", "Bearer " + await GetTokenAsync(keysecret[0], keysecret[1]) + " ");	
+					cli.DefaultRequestHeaders.Add("appkey", keysecret[0]);
+					cli.DefaultRequestHeaders.Add("appsecret", keysecret[1]);
+					cli.DefaultRequestHeaders.Add("tr_id", "FHKST66430200");
+					cli.DefaultRequestHeaders.Add("custtype", "P");
+
+					response = await cli.GetAsync(url);
+				}
+				catch (Exception e)
+				{
+					Console.WriteLine("Error Occured " + e.Message);
+				}
+				resJson = await response.Content.ReadAsStringAsync();
+			}
+			return resJson;
+		}
+		
 		//지수 조회
 		public async static Task<string> GetMarketIndex(string market)
 		{

@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', async () =>
 async function ShowExchange (x, type)
 {
 	//검색 창 끔
-	ContextSwitch('.stock_info')	
+	ContextSwitch('.stock_info_group')	
 	//내용 초기화
 	$('.stock_info').html('');
 	var html = '';

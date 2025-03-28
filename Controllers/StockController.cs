@@ -22,8 +22,19 @@ public class StockController : Controller
 	public string Search(string query)
 	{
 		SqlConnector con = HttpContext.RequestServices.GetService(typeof(SqlConnector)) as SqlConnector;
-		var collection = new StockCollection(con.SelectByName("like '%" + query + "%' "));
-		return collection.ToJson();
+		var collection = con.SelectByName("like '%" + query + "%' ");
+		
+		var result = "{";
+		int i = 0;
+		foreach (var stock in collection)
+		{
+			result += $"\"{i}\" : ";
+			result += stock.ToString();
+			if (++i != collection.Count)
+				result += ",";
+		}
+		result += "}";
+		return result;
 	}// This action method handles the search functionality for stock items.
 	
 	public string Info(string ticker, string type = "")
@@ -83,6 +94,12 @@ public class StockController : Controller
 	public string BalanceSheet(string ticker)
 	{
 		var result = KInvManager.BalanceSheet(ticker).Result;
+		return result;
+	}
+	
+	public string IncomeStatement(string ticker)
+	{
+		var result = KInvManager.IncomeStatement(ticker).Result;
 		return result;
 	}
 	
