@@ -35,10 +35,10 @@ namespace SqlTasks
 			var con = GetConnection();
 			string[] queryStringKRX = { $"select * from krx_complete where KR_Name {query} ",
 									 $"select * from krx_complete where EN_Name {query}",
-									 $"select * from krx_complete where Ticker {query}"};
+									 $"select * from krx_complete where ISIN {query}"};
 			string[] queryStringETF = {$"select * from etf where KR_Name {query} ",
 									 $"select * from etf where EN_Name {query} ",
-									 $"select * from etf where Ticker {query} " };
+									 $"select * from etf where ISIN {query} " };
 			
 			con.Open();
 			
@@ -100,7 +100,9 @@ namespace SqlTasks
 			}
 			
 			//중복 제거 후 ISIN 순으로 정렬
-			result.Distinct();
+			result = result.GroupBy( x => x.ISIN)
+				.Select(x => x.First())
+				.ToList();
 			result.OrderBy( x => x.ISIN);
 			
 			con.Close();
@@ -162,9 +164,11 @@ namespace SqlTasks
 				reader.Read();
 				
 				var expired_date = DateTime.Parse(reader["access_token_token_expired"].ToString());
+				//토큰 생성 후 24시간이 경과하지 않은 경우
 				if (expired_date.AddDays(1) > DateTime.Now)
 				{
 					result = (reader["access_token"].ToString(), expired_date.AddDays(-1));
+					Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss") + " Token 호출됨. by SQL Connector");
 				}
 			}
 			
@@ -180,6 +184,26 @@ namespace SqlTasks
 			
 			string queryString = $"update authorization set access_token = '{token}', access_token_token_expired = '{token_expired.ToString("yyyy-MM-dd hh:mm:ss")}' where appkey = '{appkey}' and appsecret = '{appsecret}'";
 			var cmd = new MySqlCommand(queryString, con);
+			if (cmd.ExecuteNonQuery() == 0)
+			{
+				con.Close();
+				InsertToken(appkey, appsecret, token, token_expired);
+			}
+			else
+			{
+				con.Close();
+			}
+		}
+		
+		private void InsertToken(string appkey, string appsecret, string token, DateTime token_expired)
+		{
+			var con = GetConnection("Server = localhost; Database=user; User Id=asp; Password=041008;");
+			con.Open();
+			
+			string queryString = $"insert into authorization(appkey, appsecret, access_token, access_token_token_expired)"+
+				$"value ('{appkey}', '{appsecret}', '{token}', '{token_expired.ToString("yyyy-MM-dd hh:mm:ss")}) ";
+			var cmd = new MySqlCommand(queryString, con);
+			Console.WriteLine(queryString);
 			cmd.ExecuteNonQuery();
 			con.Close();
 		}

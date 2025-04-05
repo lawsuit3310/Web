@@ -8,7 +8,7 @@ ShowInfo = async (x, type = "", d="d") => {
 	ContextSwitch('.stock_info_group')
 	ShowPage(0, '.stock_info_group')
 	//내용 초기화
-	$('.stock_info').html('');
+	$('.stock_1').html('');
 	$('.footer').html('');
 	
 	var html = '';
@@ -16,13 +16,14 @@ ShowInfo = async (x, type = "", d="d") => {
 	var object = await GetDataInfo(x, type, d);
 	
 	//종목 == 주식 or ETF
+	console.log(type);
 	if(object[0]['prdt_type_cd'] == 300)
 	{
 		var l = 1.2 - 0.05425 * object[0]["prdt_abrv_name"].length;
 			l = l < 0.7 ? 0.7 : l;
 		
 		html = '<div class = "info_wrapper">';
-		html = `<div class = "title"><span style = " font-size : ${l}em">${object[0]["prdt_abrv_name"]}</span><span class = "industry">${object[1]["bstp_kor_isnm"]}</span></div>`;
+		html += `<div class = "title"><span style = " font-size : ${l}em">${object[0]["prdt_abrv_name"]}</span><span class = "industry">${object[1]["bstp_kor_isnm"]}</span></div>`;
 		
 		html += '<div ID = "info_chart" class = "info_chart"></div>'
 		html += `<div class = "chart_selector"><span onclick = "ChangeChart('${x}','${type}','d')" >2주</span>`+
@@ -136,11 +137,46 @@ ShowInfo = async (x, type = "", d="d") => {
 
 				html += "</div>"
 				break;
+			//사회간접자본투융자회사
+			case "IF":
+				var data = {
+					0 : {
+						describe : "연중 최고가",
+						value :  object[1]["stck_dryy_hgpr"]
+					},
+					1 : {
+						describe : "연중 최저가",
+						value :  object[1]["stck_dryy_lwpr"]
+					},
+					2 : {
+						describe : "시가 총액",
+						value : (object[0]["thdt_clpr"] * object[0]["lstg_stqt"]).toLocaleString() + " 원"
+					}
+				};
 
+				var keys = Object.keys(data);
+
+				for (i = 0; i < keys.length; i++)
+				{
+					html += "<table><tbody>"
+					html += '<tr>'
+					html += `<th>${data[i]["describe"]}</th>`
+					html += `<td></td>`
+					d = Number(data[i]["value"]);
+					html += `<td class = "number info_${i}">${!isNaN(d) ? d.toLocaleString() : data[i]["value"]}</td>`
+					html += '</tr>'
+					html += "</tbody></table>"
+				}
+
+				html += "</div>"
+				break;
+			default:
+				console.log(object[0]['scty_grp_id_cd']);
+				break;
 		}
 	}
 	//종목 == 채권
-	if(object[0]['prdt_type_cd'] == 302)
+	else if(object[0]['prdt_type_cd'] == 302)
 	{
 		var l = 1.2 - 0.05425 * object[0]["basicInfo"]["prdt_abrv_name"].length;
 			l = l < 0.7 ? 0.7 : l;
@@ -171,7 +207,7 @@ ShowInfo = async (x, type = "", d="d") => {
 		
 		html = '<div class = "info_wrapper">';	
 		html = `<div class = "title"><span style = " font-size : ${l}em">${object[0]["basicInfo"]["prdt_abrv_name"]}</span><span class = "industry">${ind}</span></div>`;
-	
+		
 		var data =
 		{
 			0 : {
@@ -226,7 +262,7 @@ ShowInfo = async (x, type = "", d="d") => {
 			},
 			12 : {
 				describe : "최초 이자지급일자",
-				value : object[0]["basicInfo"]["frst_int_dfrm_dt"] == 0 ? " - " :  (object[0]["basicInfo"]["frst_int_dfrm_dt"] + "").replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3')
+				value : object[0]["basicInfo"]["frst_int_dfrm_dt"] == 0 ? ( object[0]["basicInfo"]["rgbf_int_dfrm_dt"]).replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3') :  (object[0]["basicInfo"]["frst_int_dfrm_dt"] + "").replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3')
 			},
 			13 : {
 				describe : "이자 (회당)",
@@ -237,9 +273,6 @@ ShowInfo = async (x, type = "", d="d") => {
 				value : ""
 			}
 		};
-
-		console.log( object[0]["basicInfo"]["int_dfrm_mcnt"])
-		console.log( object[0]["basicInfo"])
 		
 		var keys = Object.keys(data);
 
@@ -250,7 +283,7 @@ ShowInfo = async (x, type = "", d="d") => {
 			html += `<th>${data[i]["describe"]}</th>`
 			html += `<td></td>`
 			d = Number(data[i]["value"]);
-			html += `<td class = "number info_${i}">${!isNaN(d) ? d.toLocaleString() : data[i]["value"]}</td>`
+			html += `<td class = "number info_${i}">${!isNaN(d) && d != "" ? d.toLocaleString() : data[i]["value"]}</td>`
 			html += '</tr>'
 			html += "</tbody></table>"
 		}
@@ -258,35 +291,75 @@ ShowInfo = async (x, type = "", d="d") => {
 		html += "</div>"
 	}
 	
-	html_footer+=`<div class = "span_wrapper" id = "span_0"><span>종목정보</span></div>`
-	html_footer+=`<div class = "span_wrapper" id = "span_1"><span>차트</span></div>`
-	html_footer+=`<div class = "span_wrapper" id = "span_2"><span>재무재표</span></div>`
-	html_footer+=`<div class = "span_wrapper" id = "span_3"><span>현재 보유고</span></div>`
-	html_footer+=`<div class = "span_wrapper" id = "span_4"><span>관련 기사</span></div>`
+	else
+	{
+		console.log(object[0]['prdt_type_cd']);
+	}
+	
 
-	$('.stock_info').html(html);
-	$('.footer').html(html_footer);
-	$('.footer').addClass('active');
+	$('.stock_1').html(html);
 	
-	SetupCharts(object);
+	if (object[0]['prdt_type_cd'] == 300)
+	{
+		if(object[0]['scty_grp_id_cd'] == "ST")
+		{
+			html_footer+=`<div class = "span_wrapper" id = "span_0"><span>종목정보</span></div>`
+			html_footer+=`<div class = "span_wrapper" id = "span_1"><span>차트</span></div>`
+			html_footer+=`<div class = "span_wrapper" id = "span_2"><span>현재 보유고</span></div>`
+			html_footer+=`<div class = "span_wrapper" id = "span_3"><span>재무재표</span></div>`
+			html_footer+=`<div class = "span_wrapper" id = "span_4"><span>관련 기사</span></div>`
+			
+			$('.footer').html(html_footer);
+			$('.footer').addClass('active');
+
+			SetupCharts(object);
+			SetupBalance(await GetBalance(), x);
+
+			$('#span_0').on('click', () => {
+				ShowPage(0, '.stock_info_group')
+			});
+			$('#span_1').on('click', () => {
+				ShowPage(1, '.stock_info_group')
+			});
+			$('#span_2').on('click', () => {
+				ShowPage(2, '.stock_info_group')
+			});
+			$('#span_3').on('click', () => {
+				ShowPage(3, '.stock_info_group')
+			});
+			$('#span_4').on('click', () => {
+				ShowPage(4, '.stock_info_group')
+			});
+		}
+		if(object[0]['scty_grp_id_cd'] == "EF")
+		{
+			html_footer+=`<div class = "span_wrapper" id = "span_0"><span>종목정보</span></div>`
+			html_footer+=`<div class = "span_wrapper" id = "span_1"><span>구성종목</span></div>`
+			html_footer+=`<div class = "span_wrapper" id = "span_2"><span>현재 보유고</span></div>`
+			html_footer+=`<div class = "span_wrapper" id = "span_3"><span>관련 기사</span></div>`
+			
+			$('.footer').html(html_footer);
+			$('.footer').addClass('active');
+
+			SetupETFItems(object);
+			SetupBalance(await GetBalance(), x);
+			
+			$('#span_0').on('click', () => {
+				ShowPage(0, '.stock_info_group')
+			});
+			$('#span_1').on('click', () => {
+				ShowPage(1, '.stock_info_group')
+			});
+			$('#span_2').on('click', () => {
+				ShowPage(2, '.stock_info_group')
+			});
+			$('#span_3').on('click', () => {
+				ShowPage(3, '.stock_info_group')
+			});
+		}
+	}
 	
-	
-	$('#span_0').on('click', () => {
-		ShowPage(0, '.stock_info_group')
-	});
-	$('#span_1').on('click', () => {
-		ShowPage(1, '.stock_info_group')
-	});
-	$('#span_2').on('click', () => {
-		ShowPage(2, '.stock_info_group')
-	});
-	$('#span_3').on('click', () => {
-		ShowPage(3, '.stock_info_group')
-	});
-	$('#span_4').on('click', () => {
-		ShowPage(4, '.stock_info_group')
-	});
-	
+	// 시세 동향 차트 그리는 함수
 	DrawChartInfo(object);
 
 };
@@ -306,9 +379,10 @@ async function GetDataInfo(x, type, d )
 				`https://lawsuit3310.run.goorm.io/Stock/FinancialRatio?ticker=${x}`,
 				`https://lawsuit3310.run.goorm.io/Stock/BalanceSheet?ticker=${x}`,
 				`https://lawsuit3310.run.goorm.io/Stock/DailyPrice?ticker=${x}&type=${d}`,
-				`https://lawsuit3310.run.goorm.io/Stock/IncomeStatement?ticker=${x}`]
+				`https://lawsuit3310.run.goorm.io/Stock/IncomeStatement?ticker=${x}`,
+			    `https://lawsuit3310.run.goorm.io/Stock/ETFItems?ticker=${x}`]
 		
-		//정보, 가격, 재무 비율, 대차대조표, 날짜별 가격, 손익 계산서 
+		//정보, 가격, 재무 비율, 대차대조표, 날짜별 가격, 손익 계산서, ?, ETF 종목
 	}
 	else
 	{
@@ -351,7 +425,7 @@ function DrawChartInfo (object)
 	google.charts.load('current', {'packages':['corechart']});
  	google.charts.setOnLoadCallback( async () =>
 	{		
-		var original = (object[object.length-2]).reverse();
+		var original = (object[object.length-3]).reverse();
 		var table = new google.visualization.DataTable();
 		var options = {
 			colors : ['#bb3322'],
@@ -387,7 +461,7 @@ function DrawChartInfo (object)
 		var keys = Object.keys(original);
 		
 		options['colors'] = []
-		options['colors'].push(original[0]['stck_hgpr'] > original[keys.length-1]['stck_hgpr'] ? '#3344bb' : '#bb3322');
+		options['colors'].push((Number(original[0]['stck_hgpr']) > Number( original[keys.length-1]['stck_hgpr'])) ? '#3344bb' : '#bb3322');
 		
 		for (i = 0; i < keys.length; i++)
 		{
@@ -406,7 +480,6 @@ function DrawChartInfo (object)
 				table.setValue(i, 1, Number(original[i]['stck_hgpr']));
 			}
 			chart.draw(table, options);
-			console.log(true);
 		}, 200)
 	});
 }
@@ -421,7 +494,7 @@ function SetupCharts(object)
 	var options = {
 			colors : ['#706D54','#A08963','#C9B194'],
 			chartArea: {width: '80%', height: '75%'},
-		 	titlePosition: 'in', axisTitlesPosition: 'in',
+			titlePosition: 'in', axisTitlesPosition: 'in',
 			backgroundColor :  'none',
 			displayRangeSelector : false,
 			displayZoomButtons : false,
@@ -443,20 +516,27 @@ function SetupCharts(object)
 			},
 			legend : {
 				position : 'top',
-				alignment : 'end',
+				alignment : 'center',
+				pageIndex : 0,
 				textStyle : {
 					color : '#ccc',
-					fontSize : 32
+					fontSize : 24
 				}
 			},
+			chartArea : {
+				left : 100,
+				top : 50,
+				width : 650,
+				height : 350
+			},
 			reverseCategories : true,
-			width : 900,
-			height : 400,
+			width : 850,
+			height : 450,
 			lineWidth : 5,
 		
 		};
 	
-	$('.stock_charts').html("");
+	$('.stock_2').html("");
 	var html = ""
 	
 	if(object[0]['prdt_type_cd'] == 300)
@@ -472,17 +552,17 @@ function SetupCharts(object)
 				html += '<div class = "chart_wrapper"><div id = "stock_chart_6"></div></div>';
 				html += '<div class = "chart_wrapper"><div id = "stock_chart_7"></div></div>';
 
-				$('.stock_charts').html(html);
+				$('.stock_2').html(html);
 
 				//object[5] sale_account bsop_prti thtr_ntin
 
 				var IncomeStatement = Object.keys(object[5]);
-				var data_chart_1 = [["기준년월","매출","영업 이익","당기 순이익"]];
+				var data_chart_1 = [["기준년월","매출(억)","영업 이익","당기 순이익"]];
 				var data_chart_2 = [["기준년월","매출 증가율 (%)"]];
 				var data_chart_3 = [["기준년월","순이익 증가율 (%)"]];
 				var data_chart_4 = [["기준년월","유보 비율"]];
 				var data_chart_5 = [["기준년월","부채 비율"]];
-				var data_chart_6 = [["기준년월","자산", "부채"]];
+				var data_chart_6 = [["기준년월","자산(억)", "부채"]];
 
 				for (var i = 0 ; i < IncomeStatement.length - 1; i++)
 				{
@@ -495,8 +575,6 @@ function SetupCharts(object)
 					data_chart_6.push([object[5][i]["stac_yymm"],Number(object[3][i]["total_aset"]),Number(object[3][i]["total_lblt"])]);
 					if (i == 5) break;
 				}
-
-				console.log(object[2])
 
 				google.charts.load('current', { 'packages': ['corechart'] });
 				google.charts.setOnLoadCallback(()=>{
@@ -534,9 +612,150 @@ function SetupCharts(object)
 					chart_6.draw(view_chart_6, options);
 				});	
 				break;
+			case "EF":
+				break;
+			case "IF":
+				html += '<div class = "chart_wrapper"><div id = "stock_chart_1"></div></div>';
+				html += '<div class = "chart_wrapper"><div id = "stock_chart_2"></div></div>';
+				html += '<div class = "chart_wrapper"><div id = "stock_chart_3"></div></div>';
+
+				console.log(object)
+				break;
 		}
 		
 	}
 	
 	
+}
+
+async function SetupETFItems(object)
+{
+	var html = ''
+	$('.stock_2').html('');
+	
+	if (object[6].length == 0)
+		html += '<div class = "etf_item_load_failed"><span>해당 ETF는 구성 종목을 불러올 수 없습니다.</span></div>'
+	else
+	{
+		$('.stock_2').html('<div class = "etf_item_load_failed"><span>구성 종목을 불러오는 중 입니다..</span></div>');
+		html += '<div class = "chart_etf_items" id = "chart_etf_items"></div>'
+		html += '<ul>'
+		html += '<li><table><th>종목</th><td></td><td>비중</td></table></li>'
+		for (var i in object[6])
+		{
+			console.log()
+			var info = await GetStockInfo(object[6][i]['stck_shrn_iscd'])
+			html += `<li class = "etf_item" onclick = 'ShowInfo ("${object[6][i]['stck_shrn_iscd']}", "${info['output']['scty_grp_id_cd']}")'>`
+				+`<table><th>${object[6][i]['hts_kor_isnm']}</th><td></td><td>`
+				+`${object[6][i]['etf_cnfg_issu_rlim']} %</td></table></li>`
+		}
+		html += '</ul>'
+		$('.stock_2').html('');
+	}
+	
+	$('.stock_2').html(html);
+	DrawChartETFItems(object[6]);
+}
+
+function DrawChartETFItems(items)
+{
+	if (items == null || items.length == 0) return;
+	google.charts.load('current', {'packages':['corechart']});
+ 	google.charts.setOnLoadCallback( async () =>
+	{
+		var table = new google.visualization.DataTable();
+		var options = {
+			backgroundColor :  '#232326',
+			displayRangeSelector : false,
+			displayZoomButtons : false,
+			chartArea :{
+				left : 100,
+				width : 650,
+				height : 650
+			},
+			hAxis : {
+				textPosition : 'none'
+			},
+			vAxis : {
+				textPosition : 'out',
+				textStyle : {
+					color : '#ccc'
+				},
+				gridlines : {
+					count : 0
+				}
+			},
+			legend : {
+				position : 'right',
+				alignment : 'center',
+				textStyle : {
+					color : "#ccc",
+					fontSize : 28
+				}
+				
+			},
+			sliceVisibilityThreshold: .022,
+			width : 900,
+			height : 500,
+			lineWidth : 5
+		}
+		
+		var row = [];
+		var keys = Object.keys(items);
+		
+		var temp = 0;
+		
+		for (i = 0; i < keys.length; i++)
+		{
+			if (Number(items[i]['etf_cnfg_issu_rlim']) > 0)
+			{	
+				row.push([items[i]['hts_kor_isnm'], Number(items[i]['etf_cnfg_issu_rlim'])]);
+				temp += Number(items[i]['etf_cnfg_issu_rlim']);
+			}
+		}
+		if (100 > temp)
+			row.push (['기타(>0.01%) ', 100 - temp]);
+		
+		row.sort(function (a, b) {
+  			if (a[1] > b[1]) {
+				return -1;
+ 			}
+			else if (a[1] == b[1]) {
+				return 0;
+ 			}
+			else
+				return 1;
+		});
+		
+		table.addColumn('string', 'Item_Name');
+		table.addColumn('number', 'Rate');
+		table.addRows(row);
+
+		var chart = new google.visualization.PieChart(document.getElementById('chart_etf_items'));
+		chart.draw(table, options);
+	});
+}
+
+function SetupBalance(balance, ticker)
+{
+	$('.stock_3').html('');
+	var html = '';
+	var key = Object.keys(balance['output1']);
+	var flag = false;
+	
+	for (var i in key)
+	{
+		if (ticker == balance['output1'][i]['pdno'])
+		{
+			flag = true;
+			console.log(balance)
+		}
+	}
+	
+	if (!flag)
+	{
+		html += '<div class = "no_searched_items"><span>현재 보유하고 있지 않습니다.</span></div>'
+	}
+	
+	$('.stock_3').html(html);
 }

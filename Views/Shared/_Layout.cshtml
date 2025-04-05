@@ -1,39 +1,55 @@
 <head>
 	<!-- 모바일에서 화면 확대 못하게 막음 -->
-	<meta name="viewport" content="initial-scale=0.35, maximum-scale=0.35, minimum-scale=0.35, user-scalable=no" /> 
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta charset="utf-8" /> 
-	<link rel = "stylesheet" href = "~/css/Layout.css">
-	<script src="~/lib/jquery/dist/jquery.min.js"></script>
-	<!--script type= "module" src="~/lib/polyfill/classList.min.js"></script>
-	<script type= "module" src="~/lib/polyfill/resize-observer-polyfill/dist/ResizeObserver.js"></script>
-	<script type= "module" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.js"></script-->
+	<link rel = "stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous"
+		asp-fallback-href= "~/lib/bootstrap/dist/css/bootstrap.min.css"/>
+		
+	<script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"
+		asp-fallback-href= "~/lib/jquery/dist/jquery.min.js"
+		asp-fallback-test = "window.jQuery"/>
+		
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+	
+	<link rel = "stylesheet" href = "~/css/Layout.css">
 	<script src = "~/js/menu.js"></script>
 	<title>Lawsuit3310</title>
 </head>
-<body>
-	<header class = "header">
-		<span class = "logo"><a href = "/">로고입니다</a></span>
-		<div class = "menubtn">
-			<span ontouchend = "menuToggle();"></span>
+<body class = "bg-black">
+	<!-- https://www.w3schools.com/colors/colors_hex.asp 컬러 색상 목록-->
+	<nav class="navbar navbar-expand-lg navbar-inverse fixed-top bg-dark rounded-bottom-2 p-3" data-bs-theme="dark">
+		<div class="container-fluid">
+			<a class="navbar-brand fs-1" asp-controller = "Home" asp-action = "Index" >오하요오하이오</a>
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarNav">
+				<ul class="navbar-nav">
+					<li class="nav-item">
+						<a class="nav-link" href="/stock">Investment</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="#">Military</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="#">About</a>
+					</li>
+				</ul>
+			</div>
 		</div>
-	</header>
-	<div class = "menu">
-		<div class = "menubtn">
-			<span ontouchend = "menuToggle();"></span>
-		</div>
-		<div class = "clearfix">
-		</div>
-		<ul style = "color : white">
-			<li><a asp-controller = "Stock" asp-action = "Index" ><span>Investment</span></a></li>
-			<li><a><span>Investment</span></a></li>
-			<li><a><span>Investment</span></a></li>
-		</ul>
-	</div>
-	<div class = "wrapper">
-		<div class = "content">
+	</nav>
+
+	<div class = "content px-5 py-4 w-100 overflow-y-scroll">
+		<div class = "content-body">
 			@RenderBody()
 		</div>
 	</div>
+	
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"
+		asp-fallback-href= "~/lib/bootstrap/dist/js/bootstrap.min.js"
+		asp-fallback-test = "window.jQuery"></script>
+		
+	@RenderSection("scripts", required : false)
 </body>

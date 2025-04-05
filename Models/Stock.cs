@@ -27,9 +27,10 @@ public class Stock
 	{
 		ISIN = i;
 		int len = t.Length;
-		if (m == "KOSPI" || m == "KOSDAQ" || m == "KOSDAQ GLO")	
+		if (m == "KOSPI" || m == "KOSDAQ" || m == "KOSDAQ GLO" || m == "")	
 		for (int f = 0; f <  6 - len; f++)
 		{
+			Console.WriteLine(t);
             t = t.Insert(0, "0");
 		}
 		Ticker = t;

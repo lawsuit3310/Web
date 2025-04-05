@@ -78,6 +78,13 @@ public class StockController : Controller
 		return result;
 	}
 	
+	public string ETFItems(string ticker)
+	{
+		var result = "";
+		result = KInvManager.InquiryETFItem(ticker).Result;
+		return result;
+	}
+	
 	public string DailyPrice(string ticker, string type = "")
 	{
 		var result = "";

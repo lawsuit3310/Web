@@ -1,13 +1,13 @@
 .context span {text-decoration:none;}
 
 .searcher {width : 90%; height : 10%; padding-bottom : 1px; background-image : linear-gradient(90deg, #111112, grey 50%, #111112)}
-.number {font-family: 'Paperlogy-5Medium';}
+.number {font-family: 'Paperlogy-5Medium'; letter-spacing : -1px;}
 
-.footer {z-index: 1000; left : 0; bottom : -1000; transition : all 1s; display : flex;  
+.footer {z-index: 1000; left : 0; bottom : -1000; transition : all 1s; display : table;  
 	width : 1080px; border-radius : 10px; height : 200px; background-color: #444; position : fixed;
-	align-items: center; left: 50%; transform: translate(-50%, 0); color : #ccc;}
+	align-items: center; left: 50%; transform: translate(-50%, 0); color : #ccc; table-layout: fixed}
 .footer.active { bottom : 0;}
-.footer div.span_wrapper {display : inline-block; flex-grow: 1; height : 100%;}
+.footer div.span_wrapper {display : table-cell; height : 100%;}
 .footer div.span_wrapper span {position : relative; font-size : 2em; top : 80%; transform: translate(0, -40%);}
 
 .searcher * {float : left; margin-right : 2%;}
@@ -63,23 +63,35 @@ input.search_box * {color : inherit;  border-bottom : none;}
 .stock_info_group {width : 500%; height : auto; position : relative; transition : all 1s;}
 .stock_info_group > div {float : left;}
 
-.Page {width : 20%; position : relative; overflow : auto; float : left; height : 1500px;}
+.Page {width : 20%; position : relative; overflow : auto; float : left; height : 1200px;}
 .Page::-webkit-scrollbar {display: none;}
 
-.stock_info .title { width : auto; height : 10%; overflow : visible; display : block;  font-size : 3.5em; padding : 0% 8%; margin-bottom : 2px; border-radius : 30px 30px 30px 30px;
+.stock_1 .title { width : auto; height : 15%; overflow : visible; display : block;  font-size : 3.5em; padding : 3% 8%; margin-bottom : 2px; border-radius : 30px 30px 30px 30px;
 	background-color : #232326; text-align : left; color : #cccccc;}
-.stock_info .title span {float : left; height : 100%; display : flex; justify-content: center; align-items: center;}
-.stock_info .title .industry { font-size : 0.5em; margin-left : 2%;  }
-.stock_info .info_chart { display : block; width : 100%; height : 400px; margin-bottom : 2px; }
-.stock_info .chart_selector{cursor : pointer;  background-color : #232326; color : #ccc; font-size : 3em; height : 5%;}
-.stock_info .chart_selector span {font-family: 'Paperlogy-5Medium'; padding : 1%; display : block; width : 25%; float : left;}
-.stock_info table { margin-bottom : 2px; background-color : #232326; padding: 5% 8% 5% 8%; width : 100% ; height : auto; color : white; font-size : 2em;  border-radius : 0px 0px 30px 30px; }
-.stock_info table tr { background-color : #232326;}
-.stock_info table td {text-align : right;}
-.stock_info table th { width : 40%; text-align:left;}
+.stock_1 .title span {float : left; height : 100%; display : flex; justify-content: center; align-items: center;}
+.stock_1 .title .industry { font-size : 0.5em; margin-left : 2%;  }
+.stock_1 .info_chart { display : block; width : 100%; height : 400px; margin-bottom : 2px; }
+.stock_1 .chart_selector{cursor : pointer;  background-color : #232326; color : #ccc; font-size : 3em; height : 5%;}
+.stock_1 .chart_selector span {font-family: 'Paperlogy-5Medium'; padding : 2px; display : block; width : 25%; float : left;}
+.stock_1 table { margin-bottom : 2px; background-color : #232326; padding: 5% 8% 5% 8%; width : 100% ; height : auto; color : white; font-size : 2em;  border-radius : 0px 0px 30px 30px; }
+.stock_1 table tr { background-color : #232326;}
+.stock_1 table td {text-align : right;}
+.stock_1 table th { width : 40%; text-align:left;}
 
-.stock_charts > .chart_wrapper {margin-bottom: 2px;  background-color : #232326;  height : auto; min-height : 200px} 
-.stock_charts > .chart_wrapper > div {width : 100%; padding : 3% 8%;}
+.stock_2 > .chart_wrapper { background-color : #232326;  height : auto; min-height : 200px} 
+.stock_2 > .chart_wrapper > div {width : auto; padding : 3% 8%;}
+.stock_2 > .etf_item_load_failed {height : 100%; padding-top : 50%; color : #ccc; font-size : 3em; background-color : #232326}
+.stock_2 > .etf_item_load_failed > span {transform : translateY(-50%)}
+.stock_2 > ul {margin-top: 2px;}
+.stock_2 > ul > li { margin-bottom : 2px; background-color : #232326; padding: 5% 8% 5% 8%; width : 100% ; height : auto; color : white; font-size : 2em;  border-radius : 0px 0px 30px 30px; }
+.stock_2 > ul > li > table {width : 100%;}
+.stock_2 > ul > li > table > tbody {width : 100%; height : 100%;}
+.stock_2 > ul > li > table tr {width : 100%; height : 100%; color : #ccc;}
+.stock_2 > ul > li > table tr th {width : 40%; height : 100%;}
+.stock_2 > ul > li > table tr td {width : 30%; height : 100%;}
+
+.stock_3 > .no_searched_items {height : 100%; padding-top : 50%; color : #ccc; font-size : 3em; background-color : #232326}
+.stock_3 > .no_searched_items > span {transform : translateY(-50%)}
 
 .balance_list { border-radius : 30px; margin-top : -1px; overflow : hidden; transition : all 1s; height : auto; }
 .balance_list > div {margin-top : -1px; float : left;  height : 12%;}

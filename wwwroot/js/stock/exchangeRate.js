@@ -27,9 +27,9 @@ document.addEventListener('DOMContentLoaded', async () =>
 		object.push(jobject);
 	}
 	
-	kor_usd_amt.html((Math.round(object[0]['output1']['ovrs_prod_oprc'] * 100) / 100)+" 원");
-	kor_jpy_amt.html((Math.round(object[1]['output1']['ovrs_prod_oprc'] * 10000) / 100)+" 원");
-	jpy_usd_amt.html((Math.round(object[2]['output1']['ovrs_prod_oprc'] * 100) / 100)+" 원");
+	kor_usd_amt.html((Math.round(object[0]['output1']['ovrs_nmix_prpr'] * 100) / 100)+" 원");
+	kor_jpy_amt.html((Math.round(object[1]['output1']['ovrs_nmix_prpr'] * 10000) / 100)+" 원");
+	jpy_usd_amt.html((Math.round(object[2]['output1']['ovrs_nmix_prpr'] * 100) / 100)+" 엔");
 	
 	var v_kor = object[0]['output1']['ovrs_nmix_prdy_vrss'] > 0 ? ' ▲ ' :  object[0]['output1']['ovrs_nmix_prdy_vrss'] == 0 ? ' - ' : ' ▼ '
 	var v_kwj = object[1]['output1']['ovrs_nmix_prdy_vrss'] > 0 ? ' ▲ ' :  object[1]['output1']['ovrs_nmix_prdy_vrss'] == 0 ? ' - ' : ' ▼ '
@@ -58,7 +58,8 @@ async function ShowExchange (x, type)
 	//검색 창 끔
 	ContextSwitch('.stock_info_group')	
 	//내용 초기화
-	$('.stock_info').html('');
+	ShowPage(0, '.stock_info_group');
+	$('.stock_1').html('');
 	var html = '';
 	var ex = '';
 	
@@ -89,16 +90,28 @@ async function ShowExchange (x, type)
 		min = x['output2'][i]["ovrs_nmix_lwpr"] < min ? x['output2'][i]["ovrs_nmix_lwpr"] : min;
 		max = x['output2'][i]["ovrs_nmix_hgpr"] > max ? x['output2'][i]["ovrs_nmix_hgpr"] : max
 	}
-
+	
 	var data =
 	{
 		0 : {
+			describe : "현재가",
+			value : x['output1']["ovrs_nmix_prpr"] * (type == 'krwjs' ? 100 : 1) + (type == 'jpy' ? " 엔" : " 원")
+		},
+		1 : {
+			describe : "전일 대비",
+			value : x['output1']["ovrs_nmix_prdy_vrss"] * (type == 'krwjs' ? 100 : 1) + (type == 'jpy' ? " 엔" : " 원")
+		},
+		2 : {
 			describe : "1년 최고가",
 			value : max * (type == 'krwjs' ? 100 : 1) + (type == 'jpy' ? " 엔" : " 원")
 		},
-		1 : {
+		3 : {
 			describe : "1년 최저가",
 			value : min * (type == 'krwjs' ? 100 : 1) + (type == 'jpy' ? " 엔" : " 원")
+		},
+		4 : {
+			describe : "",
+			value : ""
 		}
 	};
 	
@@ -111,13 +124,13 @@ async function ShowExchange (x, type)
 		html += `<th>${data[i]["describe"]}</th>`
 		html += `<td></td>`
 		d = Number(data[i]["value"]);
-		html += `<td class = "number">${!isNaN(d) ? d.toLocaleString() : data[i]["value"]}</td>`
+		html += `<td class = "number">${!isNaN(d) && d != ''? d.toLocaleString() : data[i]["value"]}</td>`
 		html += '</tr>'
 		html += "</tbody></table>"
 	}
 	
 	html += '</div>';
-	$('.stock_info').html(html);
+	$('.stock_1').html(html);
 	
 	DrawChartExchange(x);
 
@@ -135,30 +148,36 @@ function DrawChartExchange (x)
 		console.log(x)
 		var original = (x['output2']).reverse();
 		var table = new google.visualization.DataTable();
-		var options = {
-			colors : ['#bb3322'],
-			backgroundColor :  '#232326',
-			displayRangeSelector : false,
-			displayZoomButtons : false,
-			hAxis : {
-				textPosition : 'none'
+		var table = new google.visualization.DataTable();
+	var options = {
+		colors : ['#bb3322'],
+		backgroundColor :  '#232326',
+		displayRangeSelector : false,
+		displayZoomButtons : false,
+		hAxis : {
+			textPosition : 'none'
+		},
+		vAxis : {
+			textPosition : 'out',
+			textStyle : {
+				color : '#ccc'
 			},
-			vAxis : {
-				textPosition : 'out',
-				textStyle : {
-					color : '#ccc'
-				},
-				gridlines : {
-					count : 0
-				}
-			},
-			legend : {
-				position : 'none'
-			},
-			width : 900,
-			height : 400,
-			lineWidth : 5
-		}
+			gridlines : {
+				count : 0
+			}
+		},
+		legend : {
+			position : 'none'
+		},
+		animation : {
+			duration : 500,
+			startup : true,
+			easing : 'out'
+		},
+		width : 900,
+		height : 400,
+		lineWidth : 5
+	}
 
 		var row = [];
 		var keys = Object.keys(original);
@@ -168,7 +187,7 @@ function DrawChartExchange (x)
 		
 		for (i = 0; i < keys.length; i++)
 		{
-			row.push([original[i]['stck_bsop_date'], Number(original[i]['ovrs_nmix_hgpr']) ]);
+			row.push([original[i]['stck_bsop_date'], 1 ]);
 		}
 		table.addColumn('string', 'Date');
 		table.addColumn('number', 'Price');
@@ -176,6 +195,15 @@ function DrawChartExchange (x)
 
 		var chart = new google.visualization.LineChart(document.getElementById('exchange_chart'));
 		chart.draw(table, options);
+		
+		setTimeout (() => {
+
+			for (i = 0; i < keys.length; i++)
+			{
+				table.setValue(i, 1, Number(original[i]['ovrs_nmix_hgpr']));
+			}
+			chart.draw(table, options);
+		}, 200)
 	});
 }
 

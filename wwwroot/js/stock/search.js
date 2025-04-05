@@ -45,10 +45,11 @@ async function SetupStockInfo()
 
 	$('.stock_list a').each((index, item) =>
 	{
-		$(item).on('click', (x) =>
+		$(item).on('click', async (x) =>
 		{
+			var info = await GetStockInfo(object[x.target.getAttribute('value')]["Ticker"])
 			stock_context = object[x.target.getAttribute('value')]["Ticker"];
-			ShowInfo(object[x.target.getAttribute('value')]["Ticker"]);
+			ShowInfo(object[x.target.getAttribute('value')]["Ticker"], info['output']["scty_grp_id_cd"], "");
 		});
 	});
 }

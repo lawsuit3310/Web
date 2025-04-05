@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Web;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -26,6 +27,8 @@ namespace HttpRequests.KInv
 			if (tokeninfo.Item1 == "")
 			{
 				token = await CreateToken(keysecret[0], keysecret[1]);
+				if (token == "요청이 너무 잦습니다.")
+					return "토큰이 만료되어 재생성을 시도 하였으나 실패하였습니다. 요청이 너무 잦습니다. by KInvManager";
 				con.UpdateToken(keysecret[0], keysecret[1], token, DateTime.Now);
 			}
 			else
@@ -49,9 +52,10 @@ namespace HttpRequests.KInv
 				var jobject = JObject.Parse(json);
 				result = jobject["access_token"].ToString();
 			}
-			catch
+			catch (Exception e)
 			{
 				Console.WriteLine("요청이 너무 잦습니다.");
+				Console.WriteLine(e.Message);
 				result = "요청이 너무 잦습니다.";
 			}
 			return result;
@@ -85,6 +89,29 @@ namespace HttpRequests.KInv
 			return result;
 		}
 		
+		private static async Task<bool> TrySetClientHeader(HttpClient cli, string tr_id)
+		{
+			try
+			{
+				var keysecret = await GetKeySecret();
+					
+				cli.DefaultRequestHeaders
+					  .Accept
+					  .Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+				cli.DefaultRequestHeaders.Add ("authorization", HttpUtility.HtmlEncode("Bearer " + await GetTokenAsync(keysecret[0], keysecret[1])));	
+				cli.DefaultRequestHeaders.Add("appkey", HttpUtility.HtmlEncode(keysecret[0]));
+				cli.DefaultRequestHeaders.Add("appsecret", HttpUtility.HtmlEncode(keysecret[1]));
+				cli.DefaultRequestHeaders.Add("tr_id", tr_id);
+				cli.DefaultRequestHeaders.Add("custtype", "P");
+				return true;
+			}
+			catch
+			{
+				return false;
+			}
+		}
+		
 		//한투 서버에 주식 상세 정보를 조회하는 함수
 		public static async Task<string> InquiryStockInfo(string ticker)
 		{
@@ -102,17 +129,7 @@ namespace HttpRequests.KInv
 				string stock_info = "";
 				try
 				{
-					var keysecret = await GetKeySecret();
-					
-					cli.DefaultRequestHeaders
-						  .Accept
-						  .Add(new MediaTypeWithQualityHeaderValue("application/json"));
-					
-					cli.DefaultRequestHeaders.Add ("authorization", "Bearer " + await GetTokenAsync(keysecret[0], keysecret[1]));	
-					cli.DefaultRequestHeaders.Add("appkey", keysecret[0]);
-					cli.DefaultRequestHeaders.Add("appsecret", keysecret[1]);
-					cli.DefaultRequestHeaders.Add("tr_id", "CTPF1002R");
-					cli.DefaultRequestHeaders.Add("custtype", "P");
+					await TrySetClientHeader(cli, "CTPF1002R");
 
 					response = await cli.GetAsync(url);
 				}
@@ -144,17 +161,7 @@ namespace HttpRequests.KInv
 				string stock_info = "";
 				try
 				{
-					var keysecret = await GetKeySecret();
-					
-					cli.DefaultRequestHeaders
-						  .Accept
-						  .Add(new MediaTypeWithQualityHeaderValue("application/json"));
-					
-					cli.DefaultRequestHeaders.Add ("authorization", "Bearer " + await GetTokenAsync(keysecret[0], keysecret[1]) + " ");	
-					cli.DefaultRequestHeaders.Add("appkey", keysecret[0]);
-					cli.DefaultRequestHeaders.Add("appsecret", keysecret[1]);
-					cli.DefaultRequestHeaders.Add("tr_id", "FHKST01010100");
-					cli.DefaultRequestHeaders.Add("custtype", "P");
+					await TrySetClientHeader(cli, "FHKST01010100");
 
 					response = await cli.GetAsync(url);
 				}
@@ -208,17 +215,7 @@ namespace HttpRequests.KInv
 				string stock_info = "";
 				try
 				{
-					var keysecret = await GetKeySecret();
-					
-					cli.DefaultRequestHeaders
-						  .Accept
-						  .Add(new MediaTypeWithQualityHeaderValue("application/json"));
-					
-					cli.DefaultRequestHeaders.Add ("authorization", "Bearer " + await GetTokenAsync(keysecret[0], keysecret[1]) + " ");	
-					cli.DefaultRequestHeaders.Add("appkey", keysecret[0]);
-					cli.DefaultRequestHeaders.Add("appsecret", keysecret[1]);
-					cli.DefaultRequestHeaders.Add("tr_id", "FHKST03010100");
-					cli.DefaultRequestHeaders.Add("custtype", "P");
+					await TrySetClientHeader(cli, "FHKST03010100");
 
 					response = await cli.GetAsync(url);
 				}
@@ -247,17 +244,7 @@ namespace HttpRequests.KInv
 				string stock_info = "";
 				try
 				{
-					var keysecret = await GetKeySecret();
-					
-					cli.DefaultRequestHeaders
-						  .Accept
-						  .Add(new MediaTypeWithQualityHeaderValue("application/json"));
-					
-					cli.DefaultRequestHeaders.Add ("authorization", "Bearer " + await GetTokenAsync(keysecret[0], keysecret[1]) + " ");	
-					cli.DefaultRequestHeaders.Add("appkey", keysecret[0]);
-					cli.DefaultRequestHeaders.Add("appsecret", keysecret[1]);
-					cli.DefaultRequestHeaders.Add("tr_id", "FHPST02400000");
-					cli.DefaultRequestHeaders.Add("custtype", "P");
+					await TrySetClientHeader(cli, "FHPST02400000");
 
 					response = await cli.GetAsync(url);
 				}
@@ -270,6 +257,34 @@ namespace HttpRequests.KInv
 			return resJson;
 		}
 		
+		//ETF 구성 종목 조회
+		public static async Task<string> InquiryETFItem(string ticker)
+		{
+			string subUrl = "/uapi/etfetn/v1/quotations/inquire-component-stock-price";
+			string url = baseUrl + subUrl + $"?fid_input_iscd={ticker}&fid_cond_mrkt_div_code=J&FID_COND_SCR_DIV_CODE=11216";
+			
+			//Console.WriteLine(url);
+			
+			HttpClient cli = new ();
+			HttpResponseMessage response = default;
+			JObject jobject = default;
+			var resJson = "";
+			{
+				string stock_info = "";
+				try
+				{
+					await TrySetClientHeader(cli, "FHKST121600C0");
+
+					response = await cli.GetAsync(url);
+				}
+				catch (Exception e)
+				{
+					Console.WriteLine("Error Occured " + e.Message);
+				}
+				resJson = await response.Content.ReadAsStringAsync();
+			}
+			return resJson;
+		}
 		//기업 재무 비율 조회
 		public static async Task<string> FinancialRatio(string ticker)
 		{
@@ -286,17 +301,7 @@ namespace HttpRequests.KInv
 				string stock_info = "";
 				try
 				{
-					var keysecret = await GetKeySecret();
-					
-					cli.DefaultRequestHeaders
-						  .Accept
-						  .Add(new MediaTypeWithQualityHeaderValue("application/json"));
-					
-					cli.DefaultRequestHeaders.Add ("authorization", "Bearer " + await GetTokenAsync(keysecret[0], keysecret[1]) + " ");	
-					cli.DefaultRequestHeaders.Add("appkey", keysecret[0]);
-					cli.DefaultRequestHeaders.Add("appsecret", keysecret[1]);
-					cli.DefaultRequestHeaders.Add("tr_id", "FHKST66430300");
-					cli.DefaultRequestHeaders.Add("custtype", "P");
+					await TrySetClientHeader(cli, "FHKST66430300");
 
 					response = await cli.GetAsync(url);
 				}
@@ -325,17 +330,7 @@ namespace HttpRequests.KInv
 				string stock_info = "";
 				try
 				{
-					var keysecret = await GetKeySecret();
-					
-					cli.DefaultRequestHeaders
-						  .Accept
-						  .Add(new MediaTypeWithQualityHeaderValue("application/json"));
-					
-					cli.DefaultRequestHeaders.Add ("authorization", "Bearer " + await GetTokenAsync(keysecret[0], keysecret[1]) + " ");	
-					cli.DefaultRequestHeaders.Add("appkey", keysecret[0]);
-					cli.DefaultRequestHeaders.Add("appsecret", keysecret[1]);
-					cli.DefaultRequestHeaders.Add("tr_id", "FHKST66430100");
-					cli.DefaultRequestHeaders.Add("custtype", "P");
+					await TrySetClientHeader(cli, "FHKST66430100");
 
 					response = await cli.GetAsync(url);
 				}
@@ -351,7 +346,7 @@ namespace HttpRequests.KInv
 		//손익 계산서 조회
 		public static async Task<string> IncomeStatement(string ticker)
 		{
-			string subUrl = "/uapi/domestic-stock/v1/finance/income-statement";
+			string subUrl = "/uapi/domestic-stock/v1/finance/financial-ratio";
 			string url = baseUrl + subUrl + $"?FID_DIV_CLS_CODE={0}&fid_cond_mrkt_div_code={"J"}&fid_input_iscd={ticker}";
 			
 			//Console.WriteLine(url);
@@ -364,17 +359,7 @@ namespace HttpRequests.KInv
 				string stock_info = "";
 				try
 				{
-					var keysecret = await GetKeySecret();
-					
-					cli.DefaultRequestHeaders
-						  .Accept
-						  .Add(new MediaTypeWithQualityHeaderValue("application/json"));
-					
-					cli.DefaultRequestHeaders.Add ("authorization", "Bearer " + await GetTokenAsync(keysecret[0], keysecret[1]) + " ");	
-					cli.DefaultRequestHeaders.Add("appkey", keysecret[0]);
-					cli.DefaultRequestHeaders.Add("appsecret", keysecret[1]);
-					cli.DefaultRequestHeaders.Add("tr_id", "FHKST66430200");
-					cli.DefaultRequestHeaders.Add("custtype", "P");
+					await TrySetClientHeader(cli, "FHKST66430200");
 
 					response = await cli.GetAsync(url);
 				}
@@ -422,33 +407,19 @@ namespace HttpRequests.KInv
 					string stock_info = "";
 					try
 					{
-						var keysecret = await GetKeySecret();
+						TrySetClientHeader(cli, "FHPUP02120000");
 
-						cli.DefaultRequestHeaders
-							  .Accept
-							  .Add(new MediaTypeWithQualityHeaderValue("application/json"));
-					
-					cli.DefaultRequestHeaders.Add ("authorization", "Bearer " + await GetTokenAsync(keysecret[0], keysecret[1]));	
-					cli.DefaultRequestHeaders.Add("appkey", keysecret[0]);
-					cli.DefaultRequestHeaders.Add("appsecret", keysecret[1]);
-					cli.DefaultRequestHeaders.Add("tr_id", "FHPUP02120000");
-					//cli.DefaultRequestHeaders.Add("tr_cont", "");
-					cli.DefaultRequestHeaders.Add("custtype", "P");
+						response = await cli.GetAsync(url);
+					}
+					catch (Exception e)
+					{
+						Console.WriteLine("Error Occured " + e.Message);
+					}
+					var resJson = await response.Content.ReadAsStringAsync();
+					jobject = JObject.Parse(resJson);
 
-					response = await cli.GetAsync(url);
+					result = resJson;
 				}
-				catch (Exception e)
-				{
-					Console.WriteLine("Error Occured " + e.Message);
-				}
-				var resJson = await response.Content.ReadAsStringAsync();
-				jobject = JObject.Parse(resJson);
-				
-				result = resJson;
-				
-				//Console.WriteLine(jobject.ToString());
-				//Console.WriteLine(Convert.ToInt32(jobject["stck_prpr"].ToString()));
-			}
 			}
 			//해외
 			else
@@ -481,18 +452,7 @@ namespace HttpRequests.KInv
 				string stock_info = "";
 				try
 				{
-					var keysecret = await GetKeySecret();
-
-					cli.DefaultRequestHeaders
-						  .Accept
-						  .Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-					cli.DefaultRequestHeaders.Add ("authorization", "Bearer " + await GetTokenAsync(keysecret[0], keysecret[1]));	
-					cli.DefaultRequestHeaders.Add("appkey", keysecret[0]);
-					cli.DefaultRequestHeaders.Add("appsecret", keysecret[1]);
-					cli.DefaultRequestHeaders.Add("tr_id", "FHKST03030100");
-					//cli.DefaultRequestHeaders.Add("tr_cont", "");
-					cli.DefaultRequestHeaders.Add("custtype", "P");
+					TrySetClientHeader(cli, "FHKST03030100");
 
 					response = await cli.GetAsync(url);
 				}
@@ -523,18 +483,7 @@ namespace HttpRequests.KInv
 			string stock_info = "";
 			try
 			{
-				var keysecret = await GetKeySecret();
-
-				cli.DefaultRequestHeaders
-					  .Accept
-					  .Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-				cli.DefaultRequestHeaders.Add ("authorization", "Bearer " + await GetTokenAsync(keysecret[0], keysecret[1]));	
-				cli.DefaultRequestHeaders.Add("appkey", keysecret[0]);
-				cli.DefaultRequestHeaders.Add("appsecret", keysecret[1]);
-				cli.DefaultRequestHeaders.Add("tr_id", "TTTC8434R");
-				//cli.DefaultRequestHeaders.Add("tr_cont", "");
-				cli.DefaultRequestHeaders.Add("custtype", "P");
+				TrySetClientHeader(cli, "TTTC8434R");
 
 				response = await cli.GetAsync(url);
 			}
@@ -543,15 +492,13 @@ namespace HttpRequests.KInv
 				Console.WriteLine("Error Occured " + e.Message);
 			}
 			var resJson = await response.Content.ReadAsStringAsync();
+			
 			jobject = JObject.Parse(resJson);
 			
 			var bondJson = await GetBondBalance();
 			var bondObj = JObject.Parse(bondJson);
 			
 			jobject.Add("output3", bondObj["output"].ToString());
-			
-			//Console.WriteLine(await GetBonds("KR6348951F26"));
-			
 			resJson = jobject.ToString();
 			
 			result = resJson;
@@ -576,9 +523,9 @@ namespace HttpRequests.KInv
 					  .Accept
 					  .Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-				cli.DefaultRequestHeaders.Add ("authorization", "Bearer " + await GetTokenAsync(keysecret[0], keysecret[1]));	
-				cli.DefaultRequestHeaders.Add("appkey", keysecret[0]);
-				cli.DefaultRequestHeaders.Add("appsecret", keysecret[1]);
+				cli.DefaultRequestHeaders.Add ("authorization", HttpUtility.HtmlEncode("Bearer " + await GetTokenAsync(keysecret[0], keysecret[1])));	
+				cli.DefaultRequestHeaders.Add("appkey", HttpUtility.HtmlEncode(keysecret[0]));
+				cli.DefaultRequestHeaders.Add("appsecret", HttpUtility.HtmlEncode(keysecret[1]));
 				cli.DefaultRequestHeaders.Add("tr_id", "CTSC8407R");
 				//cli.DefaultRequestHeaders.Add("tr_cont", "");
 				cli.DefaultRequestHeaders.Add("custtype", "P");
@@ -628,18 +575,7 @@ namespace HttpRequests.KInv
 			string stock_info = "";
 			try
 			{
-				var keysecret = await GetKeySecret();
-
-				cli.DefaultRequestHeaders
-					  .Accept
-					  .Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-				cli.DefaultRequestHeaders.Add ("authorization", "Bearer " + await GetTokenAsync(keysecret[0], keysecret[1]));	
-				cli.DefaultRequestHeaders.Add("appkey", keysecret[0]);
-				cli.DefaultRequestHeaders.Add("appsecret", keysecret[1]);
-				cli.DefaultRequestHeaders.Add("tr_id", "CTPF1101R");
-				//cli.DefaultRequestHeaders.Add("tr_cont", "");
-				cli.DefaultRequestHeaders.Add("custtype", "P");
+				TrySetClientHeader(cli, "CTPF1101R");
 
 				response = await cli.GetAsync(url);
 			}
@@ -666,18 +602,7 @@ namespace HttpRequests.KInv
 			string stock_info = "";
 			try
 			{
-				var keysecret = await GetKeySecret();
-
-				cli.DefaultRequestHeaders
-					  .Accept
-					  .Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-				cli.DefaultRequestHeaders.Add ("authorization", "Bearer " + await GetTokenAsync(keysecret[0], keysecret[1]));	
-				cli.DefaultRequestHeaders.Add("appkey", keysecret[0]);
-				cli.DefaultRequestHeaders.Add("appsecret", keysecret[1]);
-				cli.DefaultRequestHeaders.Add("tr_id", "CTPF1114R");
-				//cli.DefaultRequestHeaders.Add("tr_cont", "");
-				cli.DefaultRequestHeaders.Add("custtype", "P");
+				TrySetClientHeader(cli, "CTPF1114R");
 
 				response = await cli.GetAsync(url);
 			}
@@ -703,18 +628,7 @@ namespace HttpRequests.KInv
 			string stock_info = "";
 			try
 			{
-				var keysecret = await GetKeySecret();
-
-				cli.DefaultRequestHeaders
-					  .Accept
-					  .Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-				cli.DefaultRequestHeaders.Add ("authorization", "Bearer " + await GetTokenAsync(keysecret[0], keysecret[1]));	
-				cli.DefaultRequestHeaders.Add("appkey", keysecret[0]);
-				cli.DefaultRequestHeaders.Add("appsecret", keysecret[1]);
-				cli.DefaultRequestHeaders.Add("tr_id", "FHKBJ773400C0");
-				//cli.DefaultRequestHeaders.Add("tr_cont", "");
-				cli.DefaultRequestHeaders.Add("custtype", "P");
+				TrySetClientHeader(cli, "FHKBJ773400C0");
 
 				response = await cli.GetAsync(url);
 			}
@@ -736,8 +650,10 @@ namespace HttpRequests.KInv
 			string suburl= "?serviceKey=HyIL%2BEr4nzCz09RFRzkcnz1fkwXwgNJrbGOfukunyoEybDkSjwYI5TjjJO5mfZG9nvAa1l3XMuX2h7fcunZlGw%3D%3D"+
 				"&numOfRows=51&pageNo=1&resultType=json&oilCtg=휘발유";
 			
-			string url = burl + suburl;
+			burl = "http://apis.data.go.kr/1160100/service/GetGeneralProductInfoService/getOilPriceInfo?serviceKey=HyIL%2BEr4nzCz09RFRzkcnz1fkwXwgNJrbGOfukunyoEybDkSjwYI5TjjJO5mfZG9nvAa1l3XMuX2h7fcunZlGw%3D%3D&numOfRows=51&pageNo=1&resultType=json&oilCtg=%ED%9C%98%EB%B0%9C%EC%9C%A0";
 			
+			string url = burl;// + suburl;
+				
 			HttpClientHandler clientHandler = new HttpClientHandler();
 			clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
 
@@ -757,6 +673,7 @@ namespace HttpRequests.KInv
 			
 			resJson = await response.Content.ReadAsStringAsync();
 			
+			Console.WriteLine(resJson);
 			//jobject = JObject.Parse(resJson);
 			result = resJson;
 			return result;
@@ -848,18 +765,7 @@ namespace HttpRequests.KInv
 			string stock_info = "";
 			try
 			{
-				var keysecret = await GetKeySecret();
-
-				cli.DefaultRequestHeaders
-					  .Accept
-					  .Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-				cli.DefaultRequestHeaders.Add ("authorization", "Bearer " + await GetTokenAsync(keysecret[0], keysecret[1]));	
-				cli.DefaultRequestHeaders.Add("appkey", keysecret[0]);
-				cli.DefaultRequestHeaders.Add("appsecret", keysecret[1]);
-				cli.DefaultRequestHeaders.Add("tr_id", "FHKST03030100");
-				//cli.DefaultRequestHeaders.Add("tr_cont", "");
-				cli.DefaultRequestHeaders.Add("custtype", "P");
+				TrySetClientHeader(cli, "FHKST03030100");
 
 				response = await cli.GetAsync(url);
 			}

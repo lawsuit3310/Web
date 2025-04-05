@@ -12,40 +12,21 @@
     font-style: normal;
 }
 
-@font-face {
-    font-family: 'Paperlogy-5Medium';
-    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-5Medium.woff2') format('woff2');
-    font-weight: 400;
-    font-style: normal;
+:root {
+	--main-font-color: #cccccc;  /* CSS 전역 변수 선언 */
 }
 
+* {font-family : "Paperlogy-8ExtraBold"; box-sizing: border-box;}
 
-* {font-family : "Paperlogy-8ExtraBold"; margin : 0 auto; ; padding: 0;  border:none; box-sizing: border-box; text-align : center; align-items: center; font-size : 1em;}
-body {width : 1080px; background-color : black; color : inherit; }
-.clearfix {clear : both; display : block;}
+.nav-item {font-family : "Paperlogy-5Medium";}
 
-.header {z-index: 1000; width : 1080px; border-radius : 0 0 10px 10px;height : 200px; background-color: #444; position : fixed; align-items: center; }
-.logo {position: absolute; top: 50%;left: 20%; transform: translateX(-50%) translateY(-60%);
-	font-weight : bold; font-size : 3em; color : white; }
-.logo a { text-decoration : none; color : white; text-shadow: 7px 7px 5px black; }
+.content-body {padding-top : 10vh; color : var(--main-font-color) }
 
-.menubtn {position : relative; float : right; font-size : 10em; width : 200px; height : 200px;}
-.menubtn span {width : 100%; height : 100%; background-color: red; position: absolute; top: 50%; left : 50%; transform: translate(-50%, -50%); border-radius : 5px;}
-
-.menu {z-index: 1001; width : 101%; height : 1920px; position : fixed; background-color : rgba(0.5,0.5,0.5,1); left : 100%; transition : all 0.5s;}
-.menu.active {display : block; background-color : black; left : 1%; transform : translate : (0, 0%);}
-
-.menu * {z-index: inherit;}
-
-.menu ul { margin-top : 3%; width : 100%; position : relative; overflow-y : scroll; height : 100%; list-style-type: none; text-align : left; padding-left : 3%; font-size : 2.2em; }
-.menu ul * { text-align : inherit; font-size : inherit;}
-.menu ul li {height : 200px; background-image:linear-gradient(90deg, #222225, grey 25%, grey 75% , #222225); padding-bottom : 1px;
+.content {
+	box-sizing: border-box;
+	height : 90%;
 }
-.menu ul li a {position : relative; width : 100%; color : white; text-decoration : none; height:100%; background-color : #222225; display : block}
-.menu ul li a span {top : 50%; position : absolute; color : white; text-decoration : none; transform: translateX(50%) translateY(-50%)}
 
-.wrapper { background-color: #111112; padding-top : 250px;  }
-.content {width : 100%; overflow : hidden; height : 0;  margin-top : 10px; padding : 0 3%; padding-bottom : 5%; border-style : hidden; transition : all 1.5s; }
 .content::-webkit-scrollbar {
-	display:none /* Chrome , Safari , Opera */
+  display: none;
 }
